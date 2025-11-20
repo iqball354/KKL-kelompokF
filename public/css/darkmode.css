@@ -1,0 +1,311 @@
+/* ===================================================================
+   GLOBAL TRANSITION (biar dark mode smooth)
+=================================================================== */
+body, .sidebar, .header, .content, .card, .menu-item, .profile-name,
+.menu-dropdown, .btn-menu, .btn-kaprodi, input, select, textarea {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ===================================================================
+   HEADER
+=================================================================== */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 56px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-header {
+    width: 32px;
+    height: 32px;
+}
+
+.logo-text {
+    font-family: 'Inknut Antiqua', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #4c69f0;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-kaprodi {
+    background: #fff5c2;
+    color: #b88600;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    padding: 6px 15px;
+}
+
+/* --- Menu Button --- */
+.btn-menu {
+    background: white;
+    border: none;
+    font-size: 1.3rem;
+    color: #555;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+
+.btn-menu:hover {
+    background-color: #f0f0f0;
+}
+
+/* --- Dropdown Menu --- */
+.menu-wrapper {
+    position: relative;
+}
+
+.menu-dropdown {
+    position: absolute;
+    top: 48px;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 8px 0;
+    width: 150px;
+    display: none;
+}
+
+.menu-dropdown .dropdown-item {
+    background: none;
+    border: none;
+    width: 100%;
+    padding: 10px 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.menu-dropdown .dropdown-item:hover {
+    background: #f0f0f0;
+}
+
+/* ===================================================================
+   SIDEBAR
+=================================================================== */
+.sidebar {
+    width: 220px;
+    background-color: #7182D6;
+    height: calc(100vh - 56px);
+    padding: 15px 10px;
+    color: white;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+/* --- Dark Mode Icon --- */
+.darkmode-icon {
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 25px;
+}
+
+.darkmode-icon i {
+    font-size: 1.2rem;
+    color: white;
+}
+
+.darkmode-icon:hover {
+    background: rgba(255, 255, 255, 0.55);
+}
+
+/* ===================================================================
+   SIDEBAR PROFILE
+=================================================================== */
+.profile {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.icon-profile {
+    font-size: 3.2rem;
+    margin-bottom: 8px;
+}
+
+.profile-name {
+    width: 80%;
+    border-radius: 4px;
+    border: none;
+    background: white;
+    color: black;
+    padding: 6px 8px;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* ===================================================================
+   SIDEBAR MENU
+=================================================================== */
+.menu {
+    width: 100%;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.menu-item i {
+    margin-right: 12px;
+    font-size: 1.2rem;
+}
+
+.menu-item.active,
+.menu-item:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ===================================================================
+   CONTENT / DASHBOARD
+=================================================================== */
+.content {
+    margin-left: 230px;
+    margin-top: 70px;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.card-body span,
+.card-body i {
+    color: #333;
+}
+
+/* ===================================================================
+   DARK MODE GLOBAL
+=================================================================== */
+.darkmode body,
+.darkmode .content {
+    background: #121212;
+    color: white;
+}
+
+.darkmode h1,
+.darkmode h2,
+.darkmode h3,
+.darkmode h4,
+.darkmode h5,
+.darkmode p,
+.darkmode span,
+.darkmode label {
+    color: white;
+}
+
+/* SIDEBAR */
+.darkmode .sidebar {
+    background: #1f1f2e;
+}
+
+.darkmode .profile-name {
+    background: #333;
+    color: white;
+}
+
+.darkmode .menu-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* CARD */
+.darkmode .card {
+    background: #1e1e1e;
+    border-color: #333;
+}
+
+.darkmode .card-body span,
+.darkmode .card-body i {
+    color: white;
+}
+
+/* TABLE */
+.darkmode table {
+    color: white;
+}
+
+.darkmode thead {
+    background: #252525;
+}
+
+.darkmode tbody tr {
+    background: #1b1b1b;
+}
+
+/* INPUT FIELD */
+.darkmode input,
+.darkmode select,
+.darkmode textarea {
+    background: #222;
+    color: white;
+    border-color: #444;
+}
+
+/* HEADER */
+.darkmode .header {
+    background: #1b1b1b;
+    border-bottom-color: #333;
+}
+
+.darkmode .btn-menu {
+    background: #222;
+    color: white;
+}
+
+.darkmode .menu-dropdown {
+    background: #1f1f1f;
+    border-color: #333;
+}
+
+.darkmode .dropdown-item {
+    color: white;
+}
+
+.darkmode .dropdown-item:hover {
+    background: #333;
+}
