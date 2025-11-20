@@ -4,22 +4,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 
-// Halaman default → langsung ke login
-Route::get('/', function () {
-    return redirect()->route('login');
-});
-
-// Halaman login (hanya untuk guest)
-Route::get('/login', [AuthController::class, 'loginPage'])->name('login')->middleware('guest');
+// Halaman login
+Route::get('/login', [AuthController::class, 'loginPage'])->name('login');
 Route::post('/login', [AuthController::class, 'loginSubmit'])->name('login.submit');
 
 // Logout (POST)
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Halaman dashboard global (harus login)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware('auth')->name('dashboard');
+// Jika akses root "/", langsung arahkan ke login
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 
 // Route khusus per role (harus login)
 Route::middleware(['auth'])->group(function () {

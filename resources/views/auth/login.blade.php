@@ -8,13 +8,11 @@
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
     <!-- Font Inknut Antiqua -->
     <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@600;700&display=swap" rel="stylesheet">
-
+    <link rel="icon" type="image/png" href="{{ asset('asset/logo-itsm.png') }}">
     <style>
         body {
             background: url('{{ asset("asset/tampilan-login.png") }}') no-repeat center center fixed;
@@ -99,9 +97,8 @@
 
             <div class="login-box text-center">
 
-                <div class="login-title">Login untuk memulai sesion</div>
+                <div class="login-title">Login untuk memulai sesi</div>
 
-                <!-- Menampilkan Error -->
                 @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul class="m-0 p-0 ps-3 text-start">
@@ -115,7 +112,6 @@
                 <form method="POST" action="{{ route('login.submit') }}">
                     @csrf
 
-                    <!-- Username -->
                     <label class="form-label text-start w-100">Email</label>
                     <div class="input-group mb-3">
                         <input type="text" name="email" class="form-control" placeholder="Masukkan email" required>
@@ -124,7 +120,6 @@
                         </span>
                     </div>
 
-                    <!-- Password -->
                     <label class="form-label text-start w-100">Password</label>
                     <div class="input-group mb-3">
                         <input type="password" name="password" class="form-control" placeholder="Masukkan password" required>
@@ -133,7 +128,6 @@
                         </span>
                     </div>
 
-                    <!-- Tombol Login -->
                     <button type="submit" class="btn btn-purple w-100">
                         Login
                     </button>
