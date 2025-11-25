@@ -1,8 +1,8 @@
-<div class="sidebar">
+<div class="sidebar sidebar-kaprodi">
 
     <div class="profile">
         <i class="fas fa-user-circle icon-profile"></i>
-        <input type="text" readonly value="Kaprodi" class="profile-name" />
+        <input type="text" readonly value="Kaprodi" class="profile-name">
     </div>
 
     <div class="darkmode-icon" onclick="toggleDarkMode()">
@@ -10,11 +10,11 @@
     </div>
 
     <nav class="menu">
-        <a href="{{ route('akademik.dashboard') }}" class="menu-item active">
+        <a href="{{ route('kaprodi.dashboard') }}" class="menu-item active">
             <i class="fas fa-th-large"></i>
             <span>Dashboard</span>
         </a>
-        <a href="#" class="menu-item">
+        <a href="{{ route('kaprodi.keahlian.show') }}" class="menu-item">
             <i class="fas fa-graduation-cap"></i>
             <span>Dosen</span>
         </a>
@@ -27,5 +27,5 @@
             <span>Konsentrasi Jurusan</span>
         </a>
     </nav>
-</div>
 
+</div>

@@ -10,13 +10,13 @@
     </div>
 
     <nav class="menu">
-        <a href="#" class="menu-item active">
+        <a href="{{ route('dosen.dashboard') }}" class="menu-item active">
             <i class="fas fa-th-large"></i>
             <span>Dashboard</span>
         </a>
-        <a href="#" class="menu-item">
+        <a href="{{ route('keahlian.index') }}" class="menu-item">
             <i class="fas fa-graduation-cap"></i>
-            <span>Dosen</span>
+            <span>Bidang Keahlian</span>
         </a>
     </nav>
 

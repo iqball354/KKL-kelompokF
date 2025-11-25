@@ -287,3 +287,88 @@ body, .sidebar, .header, .content, .card, .menu-item, .profile-name,
 .card-body i {
     color: #333;
 }
+
+/* ===================================================================
+STYLE: Google Drive style (centered, icon hitam)
+=================================================================== */
+
+    .drive-upload-wrapper {
+        margin-bottom: 10px;
+    }
+
+    .drive-upload-box {
+        border: 2px dashed #000;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.14s ease-in-out;
+        background: #ffffff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .drive-upload-box:hover {
+        background: #f5f5f5;
+    }
+
+    .drive-upload-box i {
+        font-size: 36px;
+        color: #000 !important;
+    }
+
+    .drive-upload-box .drive-text {
+        font-size: 14px;
+        font-weight: 600;
+        color: #000;
+    }
+
+    .file-hidden {
+        display: none !important;
+    }
+
+    .preview-file {
+        margin-top: 8px;
+        font-size: 13px;
+        color: #000;
+        font-weight: 600;
+        text-align: center;
+    }
+
+    .doc-row {
+        border-bottom: 0;
+    }
+
+    .link-row .form-control {
+        width: 100%;
+    }
+
+    .doc-container {
+        background: #fbfbfb;
+        border-radius: 8px;
+    }
+
+
+/* Gaya tabel biasa */
+.my-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.my-table th,
+.my-table td {
+    border: 1px solid #333;
+    padding: 8px;
+}
+
+/* Header tabel */
+.my-table th {
+    background-color: #5568bd;
+    color: #fff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+

@@ -12,19 +12,9 @@ class DatabaseSeeder extends Seeder
      * @return void
      */
     public function run()
-<<<<<<< HEAD
-{
-    $this->call([
-        UserSeeder::class,
-    ]);
-}
-
-}
-=======
     {
         $this->call([
             UserSeeder::class,
         ]);
     }
 }
->>>>>>> f933a9d (update layout semua role, perbaikan sidebar, dan perbaikan login)

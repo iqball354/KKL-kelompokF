@@ -129,3 +129,85 @@
 .darkmode .darkmode-icon:hover {
     background: rgba(255, 255, 255, 0.35);
 }
+/* ===================================================================
+STYLE: Google Drive Dark Mode
+=================================================================== */
+
+.drive-upload-wrapper {
+    margin-bottom: 10px;
+}
+
+.drive-upload-box {
+    border: 2px dashed #888;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.14s ease-in-out;
+    background: #1c1c1c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.drive-upload-box:hover {
+    background: #242424;
+    border-color: #aaa;
+}
+
+.drive-upload-box i {
+    font-size: 36px;
+    color: #fff !important;
+}
+
+.drive-upload-box .drive-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.file-hidden {
+    display: none !important;
+}
+
+.preview-file {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #e0e0e0;
+    font-weight: 600;
+    text-align: center;
+}
+
+.doc-row {
+    border-bottom: 0;
+}
+
+.link-row .form-control {
+    width: 100%;
+    background: #2c2c2c;
+    color: #fff;
+    border: 1px solid #444;
+}
+
+.doc-container {
+    background: #2a2a2a;
+    border-radius: 8px;
+}
+
+.table.table-bordered thead th {
+    background-color: #1335ce;
+    color: #fff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.darkmode .my-table th {
+    background-color: #1335ce;
+    color: #fff;
+}
+
+body.darkmode .my-table td {
+    background-color: #1b1b1b;
+    color: white;
+}
