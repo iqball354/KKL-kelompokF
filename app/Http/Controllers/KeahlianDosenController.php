@@ -130,7 +130,7 @@ class KeahlianDosenController extends Controller
         if (isset($docs[$index])) {
             array_splice($docs, $index, 1);
             array_splice($descs, $index, 1);
-            array_splice($years, 1, 1);
+            array_splice($years, $index, 1);
         }
 
         $keahlian->$field = $docs;
@@ -216,4 +216,13 @@ class KeahlianDosenController extends Controller
 
         return back()->with('success', 'Akademik menerima data');
     }
+
+    // Tampilkan data keahlian untuk Dekan
+    public function showForDekan()
+    {
+        $keahlian = KeahlianDosen::all();
+        return view('admin.dekan.keahlian_dosen', compact('keahlian'));
+    }
 }
+
+  

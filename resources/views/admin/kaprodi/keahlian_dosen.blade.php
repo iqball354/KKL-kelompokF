@@ -3,13 +3,9 @@
 
 @section('content')
 <div class="container mt-5">
-    <h5>Manajemen Bidang Keahlian Dosen</h5>
+    <h2>Manajemen Bidang Keahlian Dosen</h2>
 
-    <!-- Search input -->
-    <div class="mb-3 d-flex justify-content-end">
-        <input type="text" id="searchInput" class="form-control w-25 me-2" placeholder="Cari data...">
-        <button class="btn btn-primary" id="searchButton">Cari Data</button>
-    </div>
+    
 
     @php
     // Gabungkan keahlian berdasarkan nama dosen menggunakan Collection
@@ -57,13 +53,33 @@
                     <strong>Total: {{ $totalDocs }}</strong>
                 </td>
                 <td>
-                    <span class="badge 
-                        @if($item->status_kaprodi=='disetujui') bg-success
-                        @elseif($item->status_kaprodi=='ditolak') bg-danger
-                        @else bg-secondary @endif">
-                        {{ ucfirst($item->status_kaprodi) ?? '-' }}
-                    </span>
-                </td>
+                        <!-- Badge Status -->
+                        <span class="badge 
+                            @if($item->status_kaprodi=='disetujui') bg-success
+                            @elseif($item->status_kaprodi=='ditolak') bg-danger
+                            @else bg-secondary @endif">
+                            {{ ucfirst($item->status_kaprodi) ?? '-' }}
+                        </span>
+                        <!-- Tombol Setujui -->
+                        @if($item->status_kaprodi != 'disetujui')
+                        <form action="{{ route('kaprodi.keahlian.aksi', $item->id) }}" method="POST" class="d-block mt-2">
+                            @csrf
+                            <input type="hidden" name="aksi" value="setuju">
+                            <input type="hidden" name="nama_dosen" value="{{ $item->nama_dosen }}">
+                            <button class="btn btn-success btn-sm w-100">Setujui</button>
+                        </form>
+                        @endif
+
+                        <!-- Tombol Tolak -->
+                        @if($item->status_kaprodi != 'ditolak')
+                        <form action="{{ route('kaprodi.keahlian.aksi', $item->id) }}" method="POST" class="d-block mt-1">
+                            @csrf
+                            <input type="hidden" name="aksi" value="tolak">
+                            <input type="hidden" name="nama_dosen" value="{{ $item->nama_dosen }}">
+                            <button class="btn btn-danger btn-sm w-100">Tolak</button>
+                        </form>
+                        @endif
+                    </td>
                 <td>
                     @if($totalDocs > 0)
                     <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#docModal-{{ $modalId }}">
@@ -77,6 +93,7 @@
             @endforeach
         </tbody>
     </table>
+
 </div>
 
 <!-- MODAL DOKUMEN GABUNGAN -->
@@ -135,34 +152,23 @@ $modalId = md5($item->nama_dosen);
 
 @section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        $('#keahlianTable').DataTable({
-            "order": [
-                [0, "asc"]
-            ],
-            "pageLength": 10
+            document.addEventListener('DOMContentLoaded', function() {
+            let table = $('#keahlianTable').DataTable({
+                "order": [[0, "asc"]],
+                "pageLength": 10
+            });
+
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+
+            searchInput.addEventListener('keyup', function() {
+                table.search(this.value).draw();
+            });
+
+            searchButton.addEventListener('click', function() {
+                table.search(searchInput.value).draw();
+            });
         });
 
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const table = document.getElementById('keahlianTable');
-        const tbody = table.getElementsByTagName('tbody')[0];
-        const rows = tbody.getElementsByTagName('tr');
-
-        function filterTable() {
-            const filter = searchInput.value.toLowerCase().trim();
-            for (let i = 0; i < rows.length; i++) {
-                let cells = rows[i].getElementsByTagName('td');
-                let rowText = '';
-                for (let j = 0; j < cells.length; j++) {
-                    rowText += cells[j].textContent.toLowerCase() + ' ';
-                }
-                rows[i].style.display = rowText.includes(filter) ? '' : 'none';
-            }
-        }
-
-        searchInput.addEventListener('keyup', filterTable);
-        searchButton.addEventListener('click', filterTable);
-    });
 </script>
 @endsection

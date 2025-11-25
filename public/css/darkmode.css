@@ -71,7 +71,9 @@
     background: #2a3a5a; /* biru tua */
     color: #a8c4ff;
 }
-.darkmode .btn-dosen:hover { background: #1f2a4d; }
+.darkmode .btn-dosen:hover {
+    background: #1f2a4d;
+}
 
 .darkmode .btn-kaprodi {
     background: #b88600; /* kuning tua */
@@ -210,4 +212,50 @@ body.darkmode .my-table th {
 body.darkmode .my-table td {
     background-color: #1b1b1b;
     color: white;
+}
+/* ===============================
+   MODAL DARK MODE (VERSI RAPIH)
+=============================== */
+
+.darkmode .modal-content {
+    background: #1e1e1e !important;
+    color: #ffffff !important;
+    border-radius: 10px;
+    border: 1px solid #444;
+}
+
+.darkmode .modal-header,
+.darkmode .modal-footer {
+    background: #2a2a2a !important;
+    border-bottom: 1px solid #444 !important;
+    border-top: 1px solid #444 !important;
+}
+
+.darkmode .modal-title {
+    color: #ffffff !important;
+}
+
+.darkmode .modal-body label {
+    color: #dddddd !important;
+}
+
+.darkmode .modal-body input,
+.darkmode .modal-body select,
+.darkmode .modal-body textarea {
+    background: #2d2d2d !important;
+    color: #ffffff !important;
+    border: 1px solid #555 !important;
+}
+
+.darkmode .modal-body input::placeholder,
+.darkmode .modal-body textarea::placeholder {
+    color: #bbbbbb !important;
+}
+
+.darkmode .modal-backdrop.show {
+    opacity: 0.6 !important;
+}
+
+.darkmode .btn-close {
+    filter: invert(1) brightness(200%);
 }

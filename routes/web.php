@@ -41,7 +41,7 @@ Route::middleware(['auth'])->group(function () {
        DEKAN
     ==================================*/
    Route::get('/dekan/dashboard', [DashboardController::class, 'dekan'])->name('dekan.dashboard');
-   Route::get('/dekan/keahlian-dosen', [KeahlianDosenController::class, 'showForDekan'])->name('dekan.keahlian.show');
+   Route::get('/dekan/keahlian-dosen', [KeahlianDosenController::class, 'showForDekan'])->name('dekan.keahlian.showForDekan');
 
    /* ================================
        WAREK 1

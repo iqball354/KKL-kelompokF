@@ -5,12 +5,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@yield('title', 'Dashboard')</title>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- DataTables CSS (WAJIB) -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+
     <link href="{{ asset('css/darkmode.css') }}" rel="stylesheet">
     <link href="{{ asset('css/global.css') }}" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ asset('asset/logo-itsm.png') }}">
+
     <style>
         body {
             margin: 0;
@@ -40,6 +46,12 @@
     <script src="{{ asset('js/darkmode.js') }}"></script>
     <script src="{{ asset('js/menu_header.js') }}"></script>
 
-</body>
+    <!-- jQuery + DataTables (WAJIB) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
 
+    <!-- Tempat script dari halaman -->
+    @yield('scripts')
+
+</body>
 </html>
