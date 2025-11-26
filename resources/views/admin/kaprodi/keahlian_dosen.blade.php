@@ -5,10 +5,31 @@
 <div class="container mt-5">
     <h2>Manajemen Bidang Keahlian Dosen</h2>
 
-    
+    <div class="d-flex justify-content-between mb-3">
+        <!-- Show entries -->
+        <div>
+            <label>
+                Tampilkan
+                <select id="entriesSelect" class="form-select d-inline-block w-auto">
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+                entri
+            </label>
+        </div>
+
+        <!-- Search kanan -->
+        <div class="input-group" style="width: 280px;">
+            <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
+            <button class="btn btn-primary" id="searchButton">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
 
     @php
-    // Gabungkan keahlian berdasarkan nama dosen menggunakan Collection
     $keahlianUnique = collect($keahlian)
     ->groupBy('nama_dosen')
     ->map(function ($group) {
@@ -53,33 +74,29 @@
                     <strong>Total: {{ $totalDocs }}</strong>
                 </td>
                 <td>
-                        <!-- Badge Status -->
-                        <span class="badge 
-                            @if($item->status_kaprodi=='disetujui') bg-success
-                            @elseif($item->status_kaprodi=='ditolak') bg-danger
-                            @else bg-secondary @endif">
-                            {{ ucfirst($item->status_kaprodi) ?? '-' }}
-                        </span>
-                        <!-- Tombol Setujui -->
-                        @if($item->status_kaprodi != 'disetujui')
-                        <form action="{{ route('kaprodi.keahlian.aksi', $item->id) }}" method="POST" class="d-block mt-2">
-                            @csrf
-                            <input type="hidden" name="aksi" value="setuju">
-                            <input type="hidden" name="nama_dosen" value="{{ $item->nama_dosen }}">
-                            <button class="btn btn-success btn-sm w-100">Setujui</button>
-                        </form>
-                        @endif
-
-                        <!-- Tombol Tolak -->
-                        @if($item->status_kaprodi != 'ditolak')
-                        <form action="{{ route('kaprodi.keahlian.aksi', $item->id) }}" method="POST" class="d-block mt-1">
-                            @csrf
-                            <input type="hidden" name="aksi" value="tolak">
-                            <input type="hidden" name="nama_dosen" value="{{ $item->nama_dosen }}">
-                            <button class="btn btn-danger btn-sm w-100">Tolak</button>
-                        </form>
-                        @endif
-                    </td>
+                    <span class="badge 
+                        @if($item->status_kaprodi=='disetujui') bg-success
+                        @elseif($item->status_kaprodi=='ditolak') bg-danger
+                        @else bg-secondary @endif">
+                        {{ ucfirst($item->status_kaprodi) ?? '-' }}
+                    </span>
+                    @if($item->status_kaprodi != 'disetujui')
+                    <form action="{{ route('kaprodi.keahlian.aksi', $item->id) }}" method="POST" class="d-block mt-2">
+                        @csrf
+                        <input type="hidden" name="aksi" value="setuju">
+                        <input type="hidden" name="nama_dosen" value="{{ $item->nama_dosen }}">
+                        <button class="btn btn-success btn-sm w-100">Setujui</button>
+                    </form>
+                    @endif
+                    @if($item->status_kaprodi != 'ditolak')
+                    <form action="{{ route('kaprodi.keahlian.aksi', $item->id) }}" method="POST" class="d-block mt-1">
+                        @csrf
+                        <input type="hidden" name="aksi" value="tolak">
+                        <input type="hidden" name="nama_dosen" value="{{ $item->nama_dosen }}">
+                        <button class="btn btn-danger btn-sm w-100">Tolak</button>
+                    </form>
+                    @endif
+                </td>
                 <td>
                     @if($totalDocs > 0)
                     <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#docModal-{{ $modalId }}">
@@ -93,10 +110,9 @@
             @endforeach
         </tbody>
     </table>
-
 </div>
 
-<!-- MODAL DOKUMEN GABUNGAN -->
+<!-- MODAL DOKUMEN -->
 @foreach($keahlianUnique as $item)
 @php
 $allDocs = [
@@ -152,23 +168,29 @@ $modalId = md5($item->nama_dosen);
 
 @section('scripts')
 <script>
-            document.addEventListener('DOMContentLoaded', function() {
-            let table = $('#keahlianTable').DataTable({
-                "order": [[0, "asc"]],
-                "pageLength": 10
-            });
-
-            const searchInput = document.getElementById('searchInput');
-            const searchButton = document.getElementById('searchButton');
-
-            searchInput.addEventListener('keyup', function() {
-                table.search(this.value).draw();
-            });
-
-            searchButton.addEventListener('click', function() {
-                table.search(searchInput.value).draw();
-            });
+    document.addEventListener('DOMContentLoaded', function() {
+        let table = $('#keahlianTable').DataTable({
+            "order": [
+                [0, "asc"]
+            ],
+            "pageLength": 10,
+            "dom": 't<"d-flex justify-content-between mt-3"ip>', // sembunyikan search bawaan
         });
 
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+        const entriesSelect = document.getElementById('entriesSelect');
+
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === "Enter") table.search(this.value).draw();
+        });
+        searchButton.addEventListener('click', function() {
+            table.search(searchInput.value).draw();
+        });
+
+        entriesSelect.addEventListener('change', function() {
+            table.page.len(this.value).draw();
+        });
+    });
 </script>
 @endsection

@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // -------------------------
-    // Helper HTML templates
-    // -------------------------
+    // ------------------------------------------------------
+    // TEMPLATE BARU (HTML Row Dokumen & Link)
+    // ------------------------------------------------------
     function createNewDocRowHTML(type) {
         return `
         <div class="doc-row new-doc-row" data-type-row="${type}">
@@ -29,7 +29,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function createLinkRowHTML() {
-        return `<div class="card mb-2 p-2 link-row">
+        return `
+        <div class="card mb-2 p-2 link-row">
             <div class="d-flex justify-content-between align-items-center">
                 <input type="url" name="link[]" class="form-control me-2" placeholder="Masukkan URL">
                 <button type="button" class="btn btn-danger btn-sm remove-link">Hapus</button>
@@ -37,42 +38,13 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>`;
     }
 
-    // -------------------------
-    // Tambahkan input Nama Dosen di modal
-    // -------------------------
-    function addNamaDosenInputManual(modalSelector, defaultValue = "") {
-        const modalBody = document.querySelector(
-            modalSelector + " .modal-body"
-        );
-        if (!modalBody) return;
-        if (!modalBody.querySelector(".nama-dosen-input")) {
-            const div = document.createElement("div");
-            div.classList.add("mb-3");
-            div.innerHTML = `
-                <label>Nama Dosen</label>
-                <input type="text" name="nama_dosen" class="form-control nama-dosen-input" value="${defaultValue}" placeholder="Ketik Nama Dosen">
-            `;
-            modalBody.insertBefore(div, modalBody.firstChild);
-        }
-    }
-
-    // -------------------------
-    // Gunakan input nama dosen di modal tambah dan edit
-    // -------------------------
-    addNamaDosenInputManual("#addExpertModal");
-
-    document.querySelectorAll(".editExpertModal").forEach((modal) => {
-        const id = modal.dataset.id;
-        const defaultNama = modal.dataset.nama || "";
-        addNamaDosenInputManual("#editExpertModal-" + id, defaultNama);
-    });
-
-    // -------------------------
-    // Toggle doc types
-    // -------------------------
+    // ------------------------------------------------------
+    // TOGGLE CONTAINER UNTUK TAMBAH
+    // ------------------------------------------------------
     document.querySelectorAll(".toggle-doc").forEach((btn) => {
         btn.addEventListener("click", function () {
             let type = this.dataset.type;
+
             document.querySelectorAll(".doc-container").forEach((c) => {
                 c.style.display =
                     c.dataset.type === type
@@ -84,30 +56,34 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // ------------------------------------------------------
+    // TOGGLE CONTAINER UNTUK EDIT
+    // ------------------------------------------------------
     document.querySelectorAll(".toggle-doc-edit").forEach((btn) => {
         btn.addEventListener("click", function () {
             let type = this.dataset.type;
             let id = this.dataset.id;
-            let container = document.getElementById(
-                "edit-container-" + type + "-" + id
-            );
-            if (container)
-                container.style.display =
-                    container.style.display === "none" ? "block" : "none";
+
+            let cont = document.getElementById(`edit-container-${type}-${id}`);
+            if (cont)
+                cont.style.display =
+                    cont.style.display === "none" ? "block" : "none";
         });
     });
 
-    // -------------------------
-    // Add/remove bidang keahlian
-    // -------------------------
+    // ------------------------------------------------------
+    // TAMBAH / REMOVE BIDANG KEAHLIAN
+    // ------------------------------------------------------
     document
         .getElementById("add-bidang")
         ?.addEventListener("click", function () {
             let container = document.getElementById("bidang-container");
             let div = document.createElement("div");
             div.classList.add("input-group", "mb-2");
-            div.innerHTML =
-                '<input type="text" name="bidang_keahlian[]" class="form-control"><button type="button" class="btn btn-danger remove-bidang">X</button>';
+            div.innerHTML = `
+            <input type="text" name="bidang_keahlian[]" class="form-control">
+            <button type="button" class="btn btn-danger remove-bidang">X</button>
+        `;
             container.appendChild(div);
         });
 
@@ -115,26 +91,32 @@ document.addEventListener("DOMContentLoaded", function () {
         btn.addEventListener("click", function () {
             let id = this.dataset.id;
             let container = document.getElementById(
-                "edit-bidang-container-" + id
+                `edit-bidang-container-${id}`
             );
+
             let div = document.createElement("div");
             div.classList.add("input-group", "mb-2");
-            div.innerHTML =
-                '<input type="text" name="bidang_keahlian[]" class="form-control"><button type="button" class="btn btn-danger remove-bidang">X</button>';
+
+            div.innerHTML = `
+                <input type="text" name="bidang_keahlian[]" class="form-control">
+                <button type="button" class="btn btn-danger remove-bidang">X</button>
+            `;
+
             container.appendChild(div);
         });
     });
 
-    // -------------------------
-    // Add/remove documents & links
-    // -------------------------
-    function addDoc(btn, type, targetSelector) {
-        let target = targetSelector
-            ? document.querySelector(targetSelector)
+    // ------------------------------------------------------
+    // ADD DOC
+    // ------------------------------------------------------
+    function addDoc(btn, type, customTarget = null) {
+        let target = customTarget
+            ? document.querySelector(customTarget)
             : btn.closest(".doc-container");
-        let wrapper = document.createElement("div");
-        wrapper.innerHTML = createNewDocRowHTML(type);
-        target.insertBefore(wrapper, btn);
+
+        let wrap = document.createElement("div");
+        wrap.innerHTML = createNewDocRowHTML(type);
+        target.insertBefore(wrap, btn);
     }
 
     document.querySelectorAll(".add-doc").forEach((btn) => {
@@ -145,23 +127,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelectorAll(".add-doc-btn").forEach((btn) => {
         btn.addEventListener("click", function () {
-            let type = this.dataset.type;
-            let id = this.dataset.id;
             addDoc(
                 btn,
-                type,
-                "#edit-container-" + type + "-" + id + " .doc-new-list"
+                this.dataset.type,
+                `#edit-container-${this.dataset.type}-${this.dataset.id} .doc-new-list`
             );
         });
     });
 
-    function addLink(btn, targetSelector) {
-        let container = targetSelector
-            ? document.querySelector(targetSelector)
+    // ------------------------------------------------------
+    // ADD LINK
+    // ------------------------------------------------------
+    function addLink(btn, target = null) {
+        let container = target
+            ? document.querySelector(target)
             : btn.closest(".doc-container").querySelector(".link-list");
-        let wrapper = document.createElement("div");
-        wrapper.innerHTML = createLinkRowHTML();
-        container.appendChild(wrapper);
+
+        let wrap = document.createElement("div");
+        wrap.innerHTML = createLinkRowHTML();
+        container.appendChild(wrap);
     }
 
     document.querySelectorAll(".add-link").forEach((btn) => {
@@ -172,38 +156,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelectorAll(".add-link-btn").forEach((btn) => {
         btn.addEventListener("click", function () {
-            let id = this.dataset.id;
-            addLink(btn, "#edit-container-link-" + id + " .link-list");
+            addLink(btn, `#edit-container-link-${this.dataset.id} .link-list`);
         });
     });
 
-    // -------------------------
-    // Remove buttons
-    // -------------------------
+    // ------------------------------------------------------
+    // REMOVE + KONFIRMASI POPUP
+    // ------------------------------------------------------
     document.addEventListener("click", function (e) {
-        if (e.target.classList.contains("remove-bidang"))
-            e.target.parentElement.remove();
+        const target = e.target;
+
         if (
-            e.target.classList.contains("remove-doc") ||
-            e.target.classList.contains("remove-doc-existing")
-        )
-            e.target.closest(".doc-row")?.remove();
-        if (e.target.classList.contains("remove-link"))
-            e.target.closest(".link-row")?.remove();
+            target.classList.contains("remove-bidang") ||
+            target.classList.contains("remove-doc") ||
+            target.classList.contains("remove-doc-existing") ||
+            target.classList.contains("remove-link")
+        ) {
+            e.preventDefault();
+
+            if (!confirm("Yakin ingin menghapus item ini?")) return;
+
+            if (target.classList.contains("remove-bidang"))
+                target.parentElement.remove();
+
+            if (
+                target.classList.contains("remove-doc") ||
+                target.classList.contains("remove-doc-existing")
+            )
+                target.closest(".doc-row")?.remove();
+
+            if (target.classList.contains("remove-link"))
+                target.closest(".link-row")?.remove();
+        }
     });
 
-    // -------------------------
-    // File preview
-    // -------------------------
+    // ------------------------------------------------------
+    // FILE PREVIEW
+    // ------------------------------------------------------
     document.addEventListener("change", function (e) {
         if (e.target.classList.contains("drive-input")) {
-            let fileName = e.target.files.length
+            let name = e.target.files.length
                 ? e.target.files[0].name
                 : "Tidak ada file";
             let preview = e.target
                 .closest(".drive-upload-wrapper")
                 .querySelector(".preview-file");
-            if (preview) preview.textContent = fileName;
+            if (preview) preview.textContent = name;
         }
     });
 });
