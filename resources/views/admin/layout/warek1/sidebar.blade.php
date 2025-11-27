@@ -14,7 +14,7 @@
             <i class="fas fa-th-large"></i>
             <span>Dashboard</span>
         </a>
-        <a href="#" class="menu-item">
+        <a href="{{ route('warek1.keahlian.showForWarek1') }}" class="menu-item">
             <i class="fas fa-graduation-cap"></i>
             <span>Dosen</span>
         </a>
