@@ -237,4 +237,18 @@ class KeahlianDosenController extends Controller
         $keahlian = KeahlianDosen::all();
         return view('admin.warek1.keahlian_dosen', compact('keahlian'));
     }
+
+    // Tampilkan data keahlian untuk Akademik
+    public function showForAkademik()
+    {
+        $keahlian = KeahlianDosen::all();
+        return view('admin.akademik.keahlian_dosen', compact('keahlian'));
+    }
+
+    // Tampilkan data keahlian untuk Hrd
+    public function showForHrd()
+    {
+        $keahlian = KeahlianDosen::all();
+        return view('admin.hrd.keahlian_dosen', compact('keahlian'));
+    }
 }
