@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="container mt-5">
-    <h2>Manajemen Bidang Keahlian Dosen</h2>
+    <h2>Data Bidang Keahlian Dosen</h2>
 
     <!-- Tombol Tambah -->
     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addExpertModal">
@@ -59,12 +59,34 @@
                         <i class="fas fa-pen"></i>
                     </button>
 
-                    <form action="{{ route('keahlian.destroy', $item->id) }}" method="POST" class="d-inline-block">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-danger btn-sm">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </form>
+                    <!-- Tombol hapus trigger modal -->
+                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                    <!-- Modal konfirmasi hapus -->
+                    <div class="modal fade" id="deleteModal-{{ $item->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Konfirmasi Hapus</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Apakah Anda yakin ingin menghapus bidang keahlian <strong>{{ $item->nama_dosen }}</strong>?
+                                </div>
+                                <div class="modal-footer">
+                                    <form action="{{ route('keahlian.destroy', $item->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                                    </form>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </td>
             </tr>
             @endforeach
@@ -84,11 +106,9 @@
                 </div>
 
                 <div class="modal-body">
-                    <!-- Nama Dosen -->
                     <label>Nama Dosen</label>
                     <input type="text" name="nama_dosen" class="form-control mb-3">
 
-                    <!-- Bidang Keahlian -->
                     <label>Bidang Keahlian</label>
                     <input type="text" name="bidang_keahlian[]" class="form-control mb-3">
 
@@ -100,7 +120,6 @@
                         @endforeach
                     </div>
 
-                    <!-- Dokumen: sertifikat, lainnya, pendidikan -->
                     @foreach(['sertifikat','lainnya','pendidikan'] as $type)
                     <div id="container-{{ $type }}" class="border p-3 mb-3 doc-container" data-type="{{ $type }}" style="display:none;">
                         <h6 class="text-center">Dokumen {{ ucfirst($type) }}</h6>
@@ -128,7 +147,6 @@
                     </div>
                     @endforeach
 
-                    <!-- Link -->
                     <div id="container-link" class="border p-3 mb-3 doc-container" data-type="link" style="display:none;">
                         <h6 class="text-center">Link Dokumen / Portofolio</h6>
                         <div class="link-list"></div>
@@ -158,11 +176,9 @@
                 </div>
 
                 <div class="modal-body">
-                    <!-- Nama Dosen -->
                     <label>Nama Dosen</label>
                     <input type="text" name="nama_dosen" class="form-control mb-3" value="{{ $item->nama_dosen ?? '' }}">
 
-                    <!-- Bidang Keahlian -->
                     <label>Bidang Keahlian</label>
                     @foreach((array)$item->bidang_keahlian as $bk)
                     <input type="text" name="bidang_keahlian[]" class="form-control mb-2" value="{{ $bk }}">
@@ -181,20 +197,26 @@
                         <h6 class="text-center">Dokumen {{ ucfirst($type) }}</h6>
 
                         @foreach($item->{'dokumen_'.$type} ?? [] as $i => $doc)
-                        <div class="row mb-2 doc-row">
+                        <div class="row mb-2 doc-row-existing">
                             <div class="col-12">
                                 @php $ext = strtolower(pathinfo($doc, PATHINFO_EXTENSION)); @endphp
                                 @if($ext == 'pdf')
-                                <embed src="{{ asset('storage/'.$doc) }}" type="application/pdf" width="100%" height="400px">
+                                <embed src="{{ asset('storage/'.$doc) }}" type="application/pdf" width="100%" height="200px">
                                 @elseif(in_array($ext, ['doc','docx','xls','xlsx','ppt','pptx']))
-                                <iframe src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/'.$doc)) }}" width="100%" height="400px" frameborder="0"></iframe>
+                                <iframe src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/'.$doc)) }}" width="100%" height="200px" frameborder="0"></iframe>
                                 @else
                                 <a href="{{ asset('storage/'.$doc) }}" target="_blank">{{ basename($doc) }}</a>
                                 @endif
-                                <div>Deskripsi: {{ $item->{'deskripsi_'.$type}[$i] ?? '-' }}</div>
-                                <div>Tahun: {{ $item->{'tahun_'.$type}[$i] ?? '-' }}</div>
                             </div>
-                            <div class="col-12 text-end mt-1"><button type="button" class="btn btn-danger btn-sm remove-doc-existing">Hapus</button></div>
+                            <div class="col-6 mt-2">
+                                <input type="text" name="deskripsi_{{ $type }}[]" class="form-control" value="{{ $item->{'deskripsi_'.$type}[$i] ?? '' }}" placeholder="Deskripsi">
+                            </div>
+                            <div class="col-4 mt-2">
+                                <input type="number" name="tahun_{{ $type }}[]" class="form-control" value="{{ $item->{'tahun_'.$type}[$i] ?? '' }}" placeholder="Tahun" min="1900" max="2100">
+                            </div>
+                            <div class="col-2 mt-2 d-flex align-items-start">
+                                <button type="button" class="btn btn-danger btn-sm remove-doc-existing ms-auto">Hapus</button>
+                            </div>
                         </div>
                         @endforeach
 
