@@ -10,7 +10,7 @@
     </div>
 
     <nav class="menu">
-        <a href="{{ route('akademik.dashboard') }}" class="menu-item active">
+        <a href="{{ route('hrd.dashboard') }}" class="menu-item active">
             <i class="fas fa-th-large"></i>
             <span>Dashboard</span>
         </a>

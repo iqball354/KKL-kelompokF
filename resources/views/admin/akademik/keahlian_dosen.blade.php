@@ -1,4 +1,4 @@
-@extends('admin.layout.dekan.main')
+@extends('admin.layout.akademik.main')
 @section('title', 'Bidang Keahlian Dosen')
 
 @section('content')

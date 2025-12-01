@@ -36,10 +36,7 @@ return new class extends Migration
             $table->json('link')->nullable();
 
             // Status Kaprodi
-            $table->enum('status_kaprodi', ['pending', 'disetujui', 'ditolak'])->default('pending');
-
-            // Status Akademik
-            $table->enum('status_akademik', ['pending', 'diterima'])->default('pending');
+            $table->enum('status_kaprodi', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
 
             $table->timestamps();
         });

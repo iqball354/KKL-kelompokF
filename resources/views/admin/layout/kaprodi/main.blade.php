@@ -16,7 +16,6 @@
     <link href="{{ asset('css/darkmode.css') }}" rel="stylesheet">
     <link href="{{ asset('css/global.css') }}" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ asset('asset/logo-itsm.png') }}">
-
     <style>
         body {
             margin: 0;
