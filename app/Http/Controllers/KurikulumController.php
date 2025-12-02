@@ -88,4 +88,9 @@ class KurikulumController extends Controller
 
         return redirect()->back()->with('success', 'Data berhasil dihapus');
     }
+    public function showForDekan()
+    {
+        $data = Kurikulum::all();
+        return view('admin.dekan.kurikulum', compact('data'));
+    }
 }

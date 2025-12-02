@@ -30,7 +30,7 @@
     </div>
 
     <!-- Tombol Tambah Kurikulum -->
-    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#formModal" id="addBtn">
+    <button class="btn btn-primary mb-3" id="addBtn">
         + Tambah Kurikulum
     </button>
 
@@ -77,16 +77,38 @@
                         data-tahun="{{ $item->tahun }}"
                         data-prodi="{{ $item->program_studi }}"
                         data-status="{{ $item->status }}"
-                        data-bs-toggle="modal"
-                        data-bs-target="#formModal">
+                        data-doc="{{ $item->dokumen_kurikulum ?? '' }}"
+                        data-docname="{{ $item->dokumen_kurikulum ? basename($item->dokumen_kurikulum) : '' }}"
+                        title="Edit">
                         <i class="fas fa-pencil-alt"></i>
                     </button>
-                    <form action="{{ route('akademik.kurikulum.destroy', $item->id) }}" method="POST" class="d-inline">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin hapus?')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </form>
+                    <!-- Tombol hapus trigger modal -->
+                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+
+                    <!-- Modal konfirmasi hapus -->
+                    <div class="modal fade" id="deleteModal-{{ $item->id }}" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Konfirmasi Hapus</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Apakah Anda yakin ingin menghapus bidang keahlian <strong>{{ $item->nama_dosen }}</strong>?
+                                </div>
+                                <div class="modal-footer">
+                                    <form action="{{ route('keahlian.destroy', $item->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                                    </form>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
             @endforeach
@@ -134,6 +156,7 @@
                 @csrf
                 <input type="hidden" name="_method" id="formMethod" value="POST">
                 <input type="hidden" name="id" id="kurikulumId">
+                <input type="hidden" name="existing_dokumen" id="existingDocument">
                 <div class="modal-header">
                     <h5 id="formTitle" class="modal-title">Tambah Kurikulum</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -153,7 +176,11 @@
                     </div>
                     <div class="mb-3">
                         <label>Dokumen Kurikulum (PDF/Office)</label>
-                        <input type="file" name="dokumen_kurikulum" class="form-control">
+                        <input type="file" name="dokumen_kurikulum" id="dokumen_kurikulum" class="form-control">
+                        <div id="currentDocWrapper" class="mt-2" style="display:none;">
+                            <small>Dokumen saat ini: <a href="#" target="_blank" id="currentDocLink"></a></small>
+                            <div><small class="text-muted">Jika tidak ingin mengganti dokumen, biarkan file kosong.</small></div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label>Status</label>
@@ -177,31 +204,40 @@
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // ---------------- DataTable ----------------
+        // DataTable
         const table = $('#kurikulumTable').DataTable({
-            "order": [
-                [1, "desc"]
-            ],
+            "order": [[1, "desc"]],
             "pageLength": 10,
             "dom": 't<"d-flex justify-content-between mt-3"ip>',
         });
 
-        // Search & entries
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const entriesSelect = document.getElementById('entriesSelect');
+        // Search & Entries
+        document.getElementById('searchButton').addEventListener('click', () =>
+            table.search(document.getElementById('searchInput').value).draw()
+        );
 
-        searchButton.addEventListener('click', () => table.search(searchInput.value).draw());
-        searchInput.addEventListener('keyup', (e) => {
-            if (e.key === 'Enter') table.search(searchInput.value).draw();
+        document.getElementById('searchInput').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') table.search(e.target.value).draw();
         });
-        entriesSelect.addEventListener('change', function() {
+
+        document.getElementById('entriesSelect').addEventListener('change', function() {
             table.page.len(this.value).draw();
         });
 
-        // ---------------- Modal Tambah/Edit ----------------
-        const formModalEl = document.getElementById('formModal');
         const form = document.getElementById('kurikulumForm');
+        const modalEl = document.getElementById('formModal');
+        const bsModal = new bootstrap.Modal(modalEl);
+
+        // Helper to reset file input (cross-browser)
+        function resetFileInput(input) {
+            try {
+                input.value = null;
+            } catch (err) {
+                // fallback
+                input.type = 'text';
+                input.type = 'file';
+            }
+        }
 
         // Mode Tambah
         document.getElementById('addBtn').addEventListener('click', () => {
@@ -210,28 +246,55 @@
             form.action = '{{ route("akademik.kurikulum.store") }}';
             document.getElementById('kurikulumId').value = '';
             document.getElementById('formMethod').value = 'POST';
+            document.getElementById('existingDocument').value = '';
+            document.getElementById('currentDocWrapper').style.display = 'none';
+            resetFileInput(document.getElementById('dokumen_kurikulum'));
+            bsModal.show();
         });
 
-        // Mode Edit
-        document.querySelectorAll('.editBtn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                const kode = btn.getAttribute('data-kode');
-                const tahun = btn.getAttribute('data-tahun');
-                const prodi = btn.getAttribute('data-prodi');
-                const status = btn.getAttribute('data-status');
+        // Mode Edit - Event Delegation supaya tetap jalan walau DataTable merender ulang
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.editBtn');
+            if (!btn) return;
 
-                document.getElementById('formTitle').innerText = 'Edit Kurikulum';
-                document.getElementById('kurikulumId').value = id;
-                document.getElementById('kode_identitas').value = kode;
-                document.getElementById('tahun').value = tahun;
-                document.getElementById('program_studi').value = prodi;
-                document.getElementById('status').value = status;
+            const id = btn.getAttribute('data-id');
+            const kode = btn.getAttribute('data-kode');
+            const tahun = btn.getAttribute('data-tahun');
+            const prodi = btn.getAttribute('data-prodi');
+            const status = btn.getAttribute('data-status');
+            const doc = btn.getAttribute('data-doc') || '';
+            const docname = btn.getAttribute('data-docname') || '';
 
-                form.action = '{{ route("akademik.kurikulum.update", ":id") }}'.replace(':id', id);
-                document.getElementById('formMethod').value = 'PUT';
-            });
+            document.getElementById('formTitle').innerText = 'Edit Kurikulum';
+            document.getElementById('kurikulumId').value = id;
+            document.getElementById('kode_identitas').value = kode;
+            document.getElementById('tahun').value = tahun;
+            document.getElementById('program_studi').value = prodi;
+            document.getElementById('status').value = status;
+
+            // show existing document link if present
+            if (doc) {
+                document.getElementById('existingDocument').value = doc;
+                const url = '{{ asset("storage/") }}' + '/' + doc;
+                const link = document.getElementById('currentDocLink');
+                link.href = url;
+                link.innerText = docname;
+                document.getElementById('currentDocWrapper').style.display = 'block';
+            } else {
+                document.getElementById('existingDocument').value = '';
+                document.getElementById('currentDocWrapper').style.display = 'none';
+            }
+
+            // reset file input so old file isn't shown
+            resetFileInput(document.getElementById('dokumen_kurikulum'));
+
+            form.action = '{{ route("akademik.kurikulum.update", ":id") }}'.replace(':id', id);
+            document.getElementById('formMethod').value = 'PUT';
+
+            // show modal AFTER values are set
+            bsModal.show();
         });
+
     });
 </script>
 @endsection

@@ -46,7 +46,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dekan/dashboard', [DashboardController::class, 'dekan'])->name('dekan.dashboard');
    /*keahlian-dosen*/
     Route::get('/dekan/keahlian-dosen', [KeahlianDosenController::class, 'showForDekan'])->name('dekan.keahlian.showForDekan');
-
+   /*kurikulum*/
+   Route::get('/dekan/kurikulum', [KurikulumController::class, 'showForDekan'])->name('dekan.kurikulum.showForDekan');
     /* ================================
        WAREK 1
     ==================================*/
@@ -78,6 +79,6 @@ Route::middleware(['auth'])->group(function () {
    Route::get('/akademik/kurikulum', [KurikulumController::class, 'index'])->name('akademik.kurikulum.index');
    Route::post('/akademik/kurikulum/store', [KurikulumController::class, 'store'])->name('akademik.kurikulum.store');
    Route::get('/akademik/kurikulum/{id}/edit', [KurikulumController::class, 'edit'])->name('akademik.kurikulum.edit');
-   Route::post('/akademik/kurikulum/{id}/update', [KurikulumController::class, 'update'])->name('akademik.kurikulum.update');
+   Route::put('/akademik/kurikulum/{id}/update', [KurikulumController::class, 'update'])->name('akademik.kurikulum.update');
    Route::delete('/akademik/kurikulum/{id}/delete', [KurikulumController::class, 'destroy'])->name('akademik.kurikulum.destroy');
 });
