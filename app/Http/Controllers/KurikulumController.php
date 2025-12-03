@@ -93,4 +93,9 @@ class KurikulumController extends Controller
         $data = Kurikulum::all();
         return view('admin.dekan.kurikulum', compact('data'));
     }
+    public function showForWarek1()
+    {
+        $data = Kurikulum::all();
+        return view('admin.warek1.kurikulum', compact('data'));
+    }
 }
