@@ -39,6 +39,8 @@ Route::middleware(['auth'])->group(function () {
     /*keahlian-dosen*/
     Route::get('/kaprodi/keahlian-dosen', [KeahlianDosenController::class, 'showForKaprodi'])->name('kaprodi.keahlian.show');
     Route::post('/kaprodi/keahlian-dosen/{id}/aksi', [KeahlianDosenController::class, 'aksiKaprodi'])->name('kaprodi.keahlian.aksi');
+    /*kurikulum*/
+    Route::get('/kaprodi/kurikulum', [KurikulumController::class, 'showForKaprodi'])->name('kaprodi.kurikulum.showForKaprodi');
 
     /* ================================
        DEKAN

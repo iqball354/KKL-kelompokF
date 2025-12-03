@@ -18,7 +18,7 @@
             <i class="fas fa-graduation-cap"></i>
             <span>Dosen</span>
         </a>
-        <a href="#" class="menu-item">
+        <a href="{{ route('kaprodi.kurikulum.showForKaprodi') }}" class="menu-item">
             <i class="far fa-file-alt"></i>
             <span>Kurikulum</span>
         </a>
