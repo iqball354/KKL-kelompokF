@@ -1,4 +1,4 @@
-@extends('admin.layout.akademik.main')
+@extends('admin.layout.warek1.main')
 @section('title', 'Data Kurikulum')
 
 @section('content')

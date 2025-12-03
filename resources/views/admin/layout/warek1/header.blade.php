@@ -6,7 +6,7 @@
     </div>
 
     <div class="header-right">
-        <div class="btn-warek">WAREK</div>
+        <div class="btn-warek">WAREK1</div>
 
         <div class="menu-wrapper">
             <button class="btn-menu" onclick="toggleMenu()">
