@@ -5,7 +5,8 @@
 <div class="container mt-5">
     <h2>Daftar Kurikulum</h2>
 
-    <div class="d-flex justify-content-between mb-3">
+    <!-- FILTER & SEARCH -->
+    <div class="d-flex justify-content-between mb-3 flex-wrap gap-3">
         <!-- Show entries -->
         <div>
             <label>
@@ -20,16 +21,28 @@
             </label>
         </div>
 
-        <!-- Search kanan -->
+        <!-- Filter Status -->
+        <div>
+            <label>
+                Status:
+                <select id="filterStatus" class="form-select d-inline-block w-auto">
+                    <option value="">Semua Status</option>
+                    <option value="aktif">Aktif</option>
+                    <option value="nonaktif">Nonaktif</option>
+                </select>
+            </label>
+        </div>
+
+        <!-- Search -->
         <div class="input-group" style="width: 280px;">
             <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
-            <button class="btn btn-primary" id="searchButton">
+            <button class="btn btn-primary" id="searchButton" type="button">
                 <i class="fas fa-search"></i>
             </button>
         </div>
     </div>
 
-    <!-- Tombol Tambah Kurikulum -->
+    <!-- Tombol Tambah -->
     <button class="btn btn-primary mb-3" id="addBtn">
         + Tambah Kurikulum
     </button>
@@ -38,10 +51,11 @@
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    <!-- TABLE -->
     <table class="my-table table table-striped" id="kurikulumTable">
         <thead>
             <tr>
-                <th>Kode Identitas</th>
+                <th>Kurikulum</th>
                 <th>Tahun</th>
                 <th>Program Studi</th>
                 <th>Dokumen</th>
@@ -53,12 +67,13 @@
             @foreach($data as $item)
             @php $modalId = md5($item->id); @endphp
             <tr>
-                <td>{{ $item->kode_identitas }}</td>
+                <td>{{ $item->kurikulum }}</td>
                 <td>{{ $item->tahun }}</td>
                 <td>{{ $item->program_studi }}</td>
                 <td>
                     @if($item->dokumen_kurikulum)
-                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#docModal-{{ $modalId }}">
+                    <button class="btn btn-info btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#docModal-{{ $modalId }}">
                         <i class="fas fa-book"></i>
                     </button>
                     @else
@@ -71,19 +86,21 @@
                     </span>
                 </td>
                 <td>
+                    <!-- Tombol Edit -->
                     <button class="btn btn-warning btn-sm editBtn"
                         data-id="{{ $item->id }}"
-                        data-kode="{{ $item->kode_identitas }}"
+                        data-kurikulum="{{ $item->kurikulum }}"
                         data-tahun="{{ $item->tahun }}"
                         data-prodi="{{ $item->program_studi }}"
                         data-status="{{ $item->status }}"
                         data-doc="{{ $item->dokumen_kurikulum ?? '' }}"
-                        data-docname="{{ $item->dokumen_kurikulum ? basename($item->dokumen_kurikulum) : '' }}"
-                        title="Edit">
+                        data-docname="{{ $item->dokumen_kurikulum ? basename($item->dokumen_kurikulum) : '' }}">
                         <i class="fas fa-pencil-alt"></i>
                     </button>
-                    <!-- Tombol hapus trigger modal -->
-                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
+
+                    <!-- Tombol Hapus -->
+                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal-{{ $item->id }}">
                         <i class="fas fa-trash"></i>
                     </button>
 
@@ -96,10 +113,10 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    Apakah Anda yakin ingin menghapus bidang keahlian <strong>{{ $item->nama_dosen }}</strong>?
+                                    Apakah Anda yakin ingin menghapus kurikulum <strong>{{ $item->kurikulum }}</strong>?
                                 </div>
                                 <div class="modal-footer">
-                                    <form action="{{ route('keahlian.destroy', $item->id) }}" method="POST">
+                                    <form action="{{ route('akademik.kurikulum.destroy', $item->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-danger">Ya, Hapus</button>
@@ -116,7 +133,7 @@
     </table>
 </div>
 
-<!-- Modal Dokumen Kurikulum -->
+<!-- Modal Dokumen -->
 @foreach($data as $item)
 @php $modalId = md5($item->id); @endphp
 <div class="modal fade" id="docModal-{{ $modalId }}" tabindex="-1">
@@ -148,7 +165,7 @@
 </div>
 @endforeach
 
-<!-- Popup Tambah/Edit Kurikulum -->
+<!-- Modal Tambah/Edit -->
 <div class="modal fade" id="formModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -163,8 +180,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label>Kode Identitas</label>
-                        <input type="text" name="kode_identitas" id="kode_identitas" class="form-control" required>
+                        <label>Kurikulum</label>
+                        <input type="text" name="kurikulum" id="kurikulum" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label>Tahun</label>
@@ -172,7 +189,19 @@
                     </div>
                     <div class="mb-3">
                         <label>Program Studi</label>
-                        <input type="text" name="program_studi" id="program_studi" class="form-control" required>
+                        <select name="program_studi" id="program_studi" class="form-select" required>
+                            <optgroup label="Fakultas Ekonomi dan Bisnis (FEB)">
+                                <option value="S2 Magister Manajemen">S2 Magister Manajemen</option>
+                                <option value="S1 Manajemen">S1 Manajemen</option>
+                                <option value="S1 Akuntansi">S1 Akuntansi</option>
+                                <option value="S1 Ekonomi Pembangunan">S1 Ekonomi Pembangunan</option>
+                                <option value="D3 Keuangan dan Perbankan">D3 Keuangan dan Perbankan</option>
+                            </optgroup>
+                            <optgroup label="Fakultas Sains, Teknologi dan Industri (FSTI)">
+                                <option value="S1 Sistem dan Teknologi Informasi (STI)">S1 Sistem dan Teknologi Informasi (STI)</option>
+                                <option value="S1 Rekayasa Perangkat Lunak (RPL)">S1 Rekayasa Perangkat Lunak (RPL)</option>
+                            </optgroup>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label>Dokumen Kurikulum (PDF/Office)</label>
@@ -198,7 +227,6 @@
         </div>
     </div>
 </div>
-
 @endsection
 
 @section('scripts')
@@ -206,40 +234,45 @@
     document.addEventListener('DOMContentLoaded', function() {
         // DataTable
         const table = $('#kurikulumTable').DataTable({
-            "order": [[1, "desc"]],
+            "order": [
+                [1, "desc"]
+            ],
             "pageLength": 10,
             "dom": 't<"d-flex justify-content-between mt-3"ip>',
+            columnDefs: [{
+                targets: [3, 5],
+                orderable: false
+            }]
         });
 
         // Search & Entries
         document.getElementById('searchButton').addEventListener('click', () =>
             table.search(document.getElementById('searchInput').value).draw()
         );
-
-        document.getElementById('searchInput').addEventListener('keyup', (e) => {
+        document.getElementById('searchInput').addEventListener('keyup', e => {
             if (e.key === 'Enter') table.search(e.target.value).draw();
         });
-
         document.getElementById('entriesSelect').addEventListener('change', function() {
             table.page.len(this.value).draw();
+        });
+        document.getElementById('filterStatus').addEventListener('change', function() {
+            table.column(4).search(this.value).draw();
         });
 
         const form = document.getElementById('kurikulumForm');
         const modalEl = document.getElementById('formModal');
         const bsModal = new bootstrap.Modal(modalEl);
 
-        // Helper to reset file input (cross-browser)
         function resetFileInput(input) {
             try {
                 input.value = null;
             } catch (err) {
-                // fallback
                 input.type = 'text';
                 input.type = 'file';
             }
         }
 
-        // Mode Tambah
+        // Tambah
         document.getElementById('addBtn').addEventListener('click', () => {
             form.reset();
             document.getElementById('formTitle').innerText = 'Tambah Kurikulum';
@@ -252,49 +285,35 @@
             bsModal.show();
         });
 
-        // Mode Edit - Event Delegation supaya tetap jalan walau DataTable merender ulang
+        // Edit
         document.addEventListener('click', function(e) {
             const btn = e.target.closest('.editBtn');
             if (!btn) return;
 
-            const id = btn.getAttribute('data-id');
-            const kode = btn.getAttribute('data-kode');
-            const tahun = btn.getAttribute('data-tahun');
-            const prodi = btn.getAttribute('data-prodi');
-            const status = btn.getAttribute('data-status');
-            const doc = btn.getAttribute('data-doc') || '';
-            const docname = btn.getAttribute('data-docname') || '';
-
             document.getElementById('formTitle').innerText = 'Edit Kurikulum';
-            document.getElementById('kurikulumId').value = id;
-            document.getElementById('kode_identitas').value = kode;
-            document.getElementById('tahun').value = tahun;
-            document.getElementById('program_studi').value = prodi;
-            document.getElementById('status').value = status;
+            document.getElementById('kurikulumId').value = btn.dataset.id;
+            document.getElementById('kurikulum').value = btn.dataset.kurikulum;
+            document.getElementById('tahun').value = btn.dataset.tahun;
+            document.getElementById('program_studi').value = btn.dataset.prodi;
+            document.getElementById('status').value = btn.dataset.status;
 
-            // show existing document link if present
-            if (doc) {
-                document.getElementById('existingDocument').value = doc;
-                const url = '{{ asset("storage/") }}' + '/' + doc;
+            if (btn.dataset.doc) {
+                document.getElementById('existingDocument').value = btn.dataset.doc;
+                const url = '{{ asset("storage/") }}/' + btn.dataset.doc;
                 const link = document.getElementById('currentDocLink');
                 link.href = url;
-                link.innerText = docname;
+                link.innerText = btn.dataset.docname;
                 document.getElementById('currentDocWrapper').style.display = 'block';
             } else {
                 document.getElementById('existingDocument').value = '';
                 document.getElementById('currentDocWrapper').style.display = 'none';
             }
 
-            // reset file input so old file isn't shown
             resetFileInput(document.getElementById('dokumen_kurikulum'));
-
-            form.action = '{{ route("akademik.kurikulum.update", ":id") }}'.replace(':id', id);
+            form.action = '{{ route("akademik.kurikulum.update", ":id") }}'.replace(':id', btn.dataset.id);
             document.getElementById('formMethod').value = 'PUT';
-
-            // show modal AFTER values are set
             bsModal.show();
         });
-
     });
 </script>
 @endsection

@@ -13,7 +13,7 @@ class KeahlianDosen extends Model
 
     // Mass assignment
     protected $fillable = [
-        'nama_dosen',          // penting supaya nama dosen bisa tersimpan
+        'nama_dosen',         
         'bidang_keahlian',
 
         // Sertifikat

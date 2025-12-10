@@ -10,21 +10,29 @@
     </div>
 
     <nav class="menu">
-        <a href="{{ route('akademik.dashboard') }}" class="menu-item active">
+        <a href="{{ route('dekan.dashboard') }}"
+            class="menu-item {{ request()->routeIs('dekan.dashboard') ? 'active' : '' }}">
             <i class="fas fa-th-large"></i>
             <span>Dashboard</span>
         </a>
-        <a href="{{ route('dekan.keahlian.showForDekan') }}" class="menu-item">
+
+        <a href="{{ route('dekan.keahlian.showForDekan') }}"
+            class="menu-item {{ request()->routeIs('dekan.keahlian.showForDekan') ? 'active' : '' }}">
             <i class="fas fa-graduation-cap"></i>
             <span>Dosen</span>
         </a>
-        <a href="{{ route('dekan.kurikulum.showForDekan') }}" class="menu-item">
+
+        <a href="{{ route('dekan.kurikulum.showForDekan') }}"
+            class="menu-item {{ request()->routeIs('dekan.kurikulum.*') ? 'active' : '' }}">
             <i class="far fa-file-alt"></i>
             <span>Kurikulum</span>
         </a>
-        <a href="#" class="menu-item">
+
+        <a href="#"
+            class="menu-item {{ request()->routeIs('dekan.konsentrasi.*') ? 'active' : '' }}">
             <i class="fas fa-tools"></i>
             <span>Konsentrasi Jurusan</span>
         </a>
     </nav>
+
 </div>

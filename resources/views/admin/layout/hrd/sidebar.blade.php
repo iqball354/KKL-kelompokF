@@ -10,13 +10,17 @@
     </div>
 
     <nav class="menu">
-        <a href="{{ route('hrd.dashboard') }}" class="menu-item active">
+        <a href="{{ route('hrd.dashboard') }}"
+            class="menu-item {{ request()->routeIs('hrd.dashboard') ? 'active' : '' }}">
             <i class="fas fa-th-large"></i>
             <span>Dashboard</span>
         </a>
-        <a href="{{ route('hrd.keahlian.showForHrd') }}" class="menu-item">
+
+        <a href="{{ route('hrd.keahlian.showForHrd') }}"
+            class="menu-item {{ request()->routeIs('hrd.keahlian.showForHrd') ? 'active' : '' }}">
             <i class="fas fa-graduation-cap"></i>
             <span>Dosen</span>
         </a>
     </nav>
+
 </div>

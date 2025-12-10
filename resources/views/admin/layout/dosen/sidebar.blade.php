@@ -2,7 +2,7 @@
 
     <div class="profile">
         <i class="fas fa-user-circle icon-profile"></i>
-        <input type="text" readonly value="Dosen" class="profile-name">
+        <input type="text" readonly value="Dosen" class="profile-name" />
     </div>
 
     <div class="darkmode-icon" onclick="toggleDarkMode()">
@@ -10,14 +10,21 @@
     </div>
 
     <nav class="menu">
-        <a href="{{ route('dosen.dashboard') }}" class="menu-item active">
+
+        {{-- Dashboard --}}
+        <a href="{{ route('dosen.dashboard') }}"
+            class="menu-item {{ request()->routeIs('dosen.dashboard') ? 'active' : '' }}">
             <i class="fas fa-th-large"></i>
             <span>Dashboard</span>
         </a>
-        <a href="{{ route('keahlian.index') }}" class="menu-item">
+
+        {{-- Bidang Keahlian --}}
+        <a href="{{ route('keahlian.index') }}"
+            class="menu-item {{ request()->routeIs('keahlian.*') ? 'active' : '' }}">
             <i class="fas fa-graduation-cap"></i>
             <span>Bidang Keahlian</span>
         </a>
+
     </nav>
 
 </div>

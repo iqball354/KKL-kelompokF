@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('kurikulums', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_identitas');       
-            $table->string('tahun');                 
-            $table->string('program_studi');         
+            $table->string('kurikulum');
+            $table->string('tahun');
+            $table->string('program_studi');
             $table->string('dokumen_kurikulum')->nullable();
             $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
-            $table->timestamps();                   
+            $table->timestamps();
         });
     }
 

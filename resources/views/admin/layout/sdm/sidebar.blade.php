@@ -10,13 +10,17 @@
     </div>
 
     <nav class="menu">
-        <a href="{{ route('akademik.dashboard') }}" class="menu-item active">
+        <a href="{{ route('sdm.dashboard') }}"
+            class="menu-item {{ request()->routeIs('sdm.dashboard') ? 'active' : '' }}">
             <i class="fas fa-th-large"></i>
             <span>Dashboard</span>
         </a>
-        <a href="{{ route('sdm.keahlian.showForSdm') }}" class="menu-item">
+
+        <a href="{{ route('sdm.keahlian.showForSdm') }}"
+            class="menu-item {{ request()->routeIs('sdm.keahlian.showForSdm') ? 'active' : '' }}">
             <i class="fas fa-graduation-cap"></i>
             <span>Dosen</span>
         </a>
     </nav>
+
 </div>

@@ -97,7 +97,7 @@
 
             <div class="login-box text-center">
 
-                <div class="login-title">Login untuk memulai sesi</div>
+                <div class="login-title">Login untuk memulai session</div>
 
                 @if ($errors->any())
                 <div class="alert alert-danger">

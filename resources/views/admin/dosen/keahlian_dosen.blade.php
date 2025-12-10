@@ -12,9 +12,10 @@
     </button>
 
     <!-- Tabel Ringkas -->
-    <table class="my-table">
+    <table class="my-table" id="keahlianTable">
         <thead>
             <tr>
+                <th>No</th>
                 <th>Nama Dosen</th>
                 <th>Bidang Keahlian</th>
                 <th>Dokumen Pendukung</th>
@@ -25,7 +26,10 @@
         <tbody>
             @foreach($keahlian as $item)
             <tr>
+                <td>{{ $loop->iteration }}</td>
+
                 <td>{{ $item->nama_dosen ?? '-' }}</td>
+
                 <td>{{ is_array($item->bidang_keahlian) ? implode(', ', $item->bidang_keahlian) : $item->bidang_keahlian }}</td>
 
                 <td>
@@ -59,12 +63,10 @@
                         <i class="fas fa-pen"></i>
                     </button>
 
-                    <!-- Tombol hapus trigger modal -->
                     <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
                         <i class="fas fa-trash"></i>
                     </button>
 
-                    <!-- Modal konfirmasi hapus -->
                     <div class="modal fade" id="deleteModal-{{ $item->id }}" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
@@ -135,8 +137,12 @@
                             </div>
 
                             <div class="row mb-2">
-                                <div class="col-6"><input type="text" name="deskripsi_{{ $type }}[]" class="form-control" placeholder="Deskripsi"></div>
-                                <div class="col-4"><input type="number" name="tahun_{{ $type }}[]" class="form-control" placeholder="Tahun" min="1900" max="2100"></div>
+                                <div class="col-6">
+                                    <input type="text" name="deskripsi_{{ $type }}[]" class="form-control" placeholder="Deskripsi">
+                                </div>
+                                <div class="col-4">
+                                    <input type="number" name="tahun_{{ $type }}[]" class="form-control" placeholder="Tahun" min="1900" max="2100">
+                                </div>
                                 <div class="col-2 d-flex align-items-start">
                                     <button type="button" class="btn btn-danger btn-sm remove-doc ms-auto">Hapus</button>
                                 </div>
@@ -268,12 +274,14 @@ $allDocs = [
                 <h5 class="modal-title">Dokumen Pendukung - {{ is_array($item->bidang_keahlian) ? implode(', ', $item->bidang_keahlian) : $item->bidang_keahlian }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body">
                 @foreach($allDocs as $type => $docs)
                 @if(count($docs))
                 <h6 class="mt-3">{{ $type }}</h6>
                 @foreach($docs as $i => $doc)
                 <div class="card mb-2 p-2">
+
                     @if($type == 'Link')
                     <a href="{{ $doc }}" target="_blank">{{ $doc }}</a>
                     @else
@@ -281,18 +289,20 @@ $allDocs = [
                     @if($ext == 'pdf')
                     <embed src="{{ asset('storage/'.$doc) }}" type="application/pdf" width="100%" height="400px">
                     @elseif(in_array($ext, ['doc','docx','xls','xlsx','ppt','pptx']))
-                    <iframe src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/'.$doc)) }}" width="100%" height="400px" frameborder="0"></iframe>
+                    <iframe src="https://view.officeapps.live.op/embed.aspx?src={{ urlencode(asset('storage/'.$doc)) }}" width="100%" height="400px"></iframe>
                     @else
                     <a href="{{ asset('storage/'.$doc) }}" target="_blank">{{ basename($doc) }}</a>
                     @endif
                     <div>Deskripsi: {{ $item->{'deskripsi_'.strtolower($type)}[$i] ?? '-' }}</div>
                     <div>Tahun: {{ $item->{'tahun_'.strtolower($type)}[$i] ?? '-' }}</div>
                     @endif
+
                 </div>
                 @endforeach
                 @endif
                 @endforeach
             </div>
+
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
@@ -301,4 +311,36 @@ $allDocs = [
 </div>
 @endforeach
 
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const table = $('#keahlianTable').DataTable({
+            "order": [
+                [1, "asc"]
+            ],
+            "pageLength": 10,
+            "columnDefs": [{
+                    "orderable": false,
+                    "targets": 0
+                },
+                {
+                    "orderable": false,
+                    "targets": 5
+                }
+            ],
+            "dom": 't<"d-flex justify-content-between mt-3"ip>',
+        });
+
+        table.on('draw.dt', function() {
+            let info = table.page.info();
+            table.column(0, {
+                page: 'current'
+            }).nodes().each(function(cell, i) {
+                cell.innerHTML = i + 1 + info.start;
+            });
+        });
+    });
+</script>
 @endsection

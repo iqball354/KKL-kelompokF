@@ -35,6 +35,7 @@
     ->map(function ($group) {
     $first = $group->first();
     $first->bidang_keahlian = collect($group)->pluck('bidang_keahlian')->flatten()->unique()->toArray();
+
     foreach (['dokumen_sertifikat', 'dokumen_lainnya', 'dokumen_pendidikan', 'link'] as $docType) {
     $first->$docType = collect($group)->pluck($docType)->flatten()->filter()->toArray();
     }
@@ -45,6 +46,7 @@
     <table class="my-table" id="keahlianTable">
         <thead>
             <tr>
+                <th>No</th>
                 <th>Nama Dosen</th>
                 <th>Bidang Keahlian</th>
                 <th>Jumlah Dokumen</th>
@@ -58,14 +60,17 @@
             $bidangGabunganStr = is_array($item->bidang_keahlian)
             ? implode(', ', $item->bidang_keahlian)
             : '-';
+
             $count_sertifikat = count($item->dokumen_sertifikat ?? []);
             $count_lainnya = count($item->dokumen_lainnya ?? []);
             $count_pendidikan = count($item->dokumen_pendidikan ?? []);
             $count_link = count($item->link ?? []);
+
             $totalDocs = $count_sertifikat + $count_lainnya + $count_pendidikan + $count_link;
             $modalId = md5($item->nama_dosen);
             @endphp
             <tr>
+                <td></td>
                 <td>{{ $item->nama_dosen }}</td>
                 <td>{{ $bidangGabunganStr }}</td>
                 <td>
@@ -76,11 +81,10 @@
                     <strong>Total: {{ $totalDocs }}</strong>
                 </td>
                 <td>
-                    <span
-                        class="badge
-                            @if ($item->status_kaprodi == 'disetujui') bg-success
-                            @elseif($item->status_kaprodi == 'ditolak') bg-danger
-                            @else bg-secondary @endif">
+                    <span class="badge
+                        @if ($item->status_kaprodi == 'disetujui') bg-success
+                        @elseif($item->status_kaprodi == 'ditolak') bg-danger
+                        @else bg-secondary @endif">
                         {{ ucfirst($item->status_kaprodi) ?? '-' }}
                     </span>
                 </td>
@@ -120,6 +124,7 @@ $modalId = md5($item->nama_dosen);
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+
                 @foreach ($allDocs as $type => $docs)
                 @if (count($docs))
                 <h6 class="mt-3">{{ $type }}</h6>
@@ -129,6 +134,7 @@ $modalId = md5($item->nama_dosen);
                     <a href="{{ $doc }}" target="_blank">{{ $doc }}</a>
                     @else
                     @php $ext = strtolower(pathinfo($doc, PATHINFO_EXTENSION)); @endphp
+
                     @if ($ext == 'pdf')
                     <embed src="{{ asset('storage/' . $doc) }}" type="application/pdf"
                         width="100%" height="400px">
@@ -140,6 +146,7 @@ $modalId = md5($item->nama_dosen);
                     <a href="{{ asset('storage/' . $doc) }}"
                         target="_blank">{{ basename($doc) }}</a>
                     @endif
+
                     <div>Deskripsi: {{ $item->{'deskripsi_' . strtolower($type)}[$i] ?? '-' }}</div>
                     <div>Tahun: {{ $item->{'tahun_' . strtolower($type)}[$i] ?? '-' }}</div>
                     @endif
@@ -147,6 +154,7 @@ $modalId = md5($item->nama_dosen);
                 @endforeach
                 @endif
                 @endforeach
+
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -160,13 +168,32 @@ $modalId = md5($item->nama_dosen);
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
         let table = $('#keahlianTable').DataTable({
             "order": [
-                [0, "asc"]
+                [1, "asc"]
             ],
             "pageLength": 10,
-            "dom": 't<"d-flex justify-content-between mt-3"ip>', // sembunyikan search bawaan
+            "dom": 't<"d-flex justify-content-between mt-3"ip>',
+            columnDefs: [{
+                    targets: 0,
+                    orderable: false
+                } // Kolom nomor urut
+            ]
         });
+
+        // NOMOR URUT OTOMATIS
+        table.on('order.dt search.dt draw.dt', function() {
+            let i = 1;
+            table.column(0, {
+                search: 'applied',
+                order: 'applied',
+                page: 'current'
+            }).nodes().each(function(cell) {
+                cell.innerHTML = i++;
+            });
+        }).draw();
+
 
         const searchInput = document.getElementById('searchInput');
         const searchButton = document.getElementById('searchButton');
@@ -184,6 +211,7 @@ $modalId = md5($item->nama_dosen);
         entriesSelect.addEventListener('change', function() {
             table.page.len(this.value).draw();
         });
+
     });
 </script>
 @endsection
