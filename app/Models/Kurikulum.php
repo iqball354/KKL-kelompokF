@@ -9,7 +9,7 @@ class Kurikulum extends Model
     protected $table = 'kurikulums'; // pastikan sesuai nama tabel migration
 
     protected $fillable = [
-        'kode_identitas',      
+        'id_kurikulum',
         'tahun',
         'program_studi',
         'dokumen_kurikulum',

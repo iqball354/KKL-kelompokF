@@ -35,7 +35,7 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Kurikulum</th>
+                <th>id Kurikulum</th>
                 <th>Tahun</th>
                 <th>Program Studi</th>
                 <th>Dokumen</th>
@@ -47,7 +47,7 @@
             @php $modalId = md5($item->id); @endphp
             <tr>
                 <td></td> <!-- nomor otomatis -->
-                <td>{{ $item->kurikulum }}</td>
+                <td>{{ $item->id_kurikulum }}</td>
                 <td>{{ $item->tahun }}</td>
                 <td>{{ $item->program_studi }}</td>
                 <td>

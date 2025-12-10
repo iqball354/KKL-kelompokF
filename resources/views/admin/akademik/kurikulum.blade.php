@@ -55,7 +55,7 @@
     <table class="my-table table table-striped" id="kurikulumTable">
         <thead>
             <tr>
-                <th>Kurikulum</th>
+                <th>ID Kurikulum</th>
                 <th>Tahun</th>
                 <th>Program Studi</th>
                 <th>Dokumen</th>
@@ -67,7 +67,7 @@
             @foreach($data as $item)
             @php $modalId = md5($item->id); @endphp
             <tr>
-                <td>{{ $item->kurikulum }}</td>
+                <td>{{ $item->id_kurikulum }}</td>
                 <td>{{ $item->tahun }}</td>
                 <td>{{ $item->program_studi }}</td>
                 <td>
@@ -89,7 +89,7 @@
                     <!-- Tombol Edit -->
                     <button class="btn btn-warning btn-sm editBtn"
                         data-id="{{ $item->id }}"
-                        data-kurikulum="{{ $item->kurikulum }}"
+                        data-id-kurikulum="{{ $item->id_kurikulum }}"
                         data-tahun="{{ $item->tahun }}"
                         data-prodi="{{ $item->program_studi }}"
                         data-status="{{ $item->status }}"
@@ -180,8 +180,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label>Kurikulum</label>
-                        <input type="text" name="kurikulum" id="kurikulum" class="form-control" required>
+                        <label>id Kurikulum</label>
+                        <input type="text" name="id_kurikulum" id="id_kurikulum" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label>Tahun</label>
@@ -292,7 +292,7 @@
 
             document.getElementById('formTitle').innerText = 'Edit Kurikulum';
             document.getElementById('kurikulumId').value = btn.dataset.id;
-            document.getElementById('kurikulum').value = btn.dataset.kurikulum;
+            document.getElementById('id_kurikulum').value = btn.dataset.idKurikulum || '';
             document.getElementById('tahun').value = btn.dataset.tahun;
             document.getElementById('program_studi').value = btn.dataset.prodi;
             document.getElementById('status').value = btn.dataset.status;

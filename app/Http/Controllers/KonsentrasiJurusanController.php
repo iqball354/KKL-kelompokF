@@ -158,24 +158,28 @@ class KonsentrasiJurusanController extends Controller
     public function verifikasiIndex()
     {
         $data = KonsentrasiJurusan::with('kurikulum', 'verifier')->get();
-        return view('admin.akademik.konsentrasi', compact('data'));
+        return view('admin.akademik.konsentrasi_jurusan', compact('data'));
     }
 
     public function verifikasiUpdate(Request $request, $id)
     {
         $request->validate([
-            'status_verifikasi' => 'required|in:approved,rejected',
+            'status_verifikasi' => 'required|in:disetujui,ditolak',
             'alasan_verifikasi' => 'nullable|string',
         ]);
 
         $konsentrasi = KonsentrasiJurusan::findOrFail($id);
+
         $konsentrasi->update([
             'status_verifikasi' => $request->status_verifikasi,
-            'alasan_verifikasi' => $request->alasan_verifikasi,
+            'alasan_verifikasi' => $request->status_verifikasi == 'ditolak'
+                                    ? $request->alasan_verifikasi
+                                    : null,
             'verifikasi_by' => Auth::id(),
             'verifikasi_at' => now(),
         ]);
 
         return redirect()->back()->with('success', 'Status verifikasi berhasil diperbarui');
     }
+
 }

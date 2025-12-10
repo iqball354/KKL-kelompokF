@@ -25,7 +25,7 @@
             <span>Kurikulum</span>
         </a>
 
-        <a href="#" class="menu-item {{ request()->routeIs('akademik.konsentrasi.*') ? 'active' : '' }}">
+        <a href="{{ route('akademik.konsentrasi.index') }}" class="menu-item {{ request()->routeIs('akademik.konsentrasi.*') ? 'active' : '' }}">
             <i class="fas fa-tools"></i>
             <span>Konsentrasi Jurusan</span>
         </a>

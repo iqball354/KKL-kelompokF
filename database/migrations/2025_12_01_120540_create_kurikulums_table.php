@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('kurikulums', function (Blueprint $table) {
             $table->id();
-            $table->string('kurikulum');
+            $table->string('id_kurikulum');
             $table->string('tahun');
             $table->string('program_studi');
             $table->string('dokumen_kurikulum')->nullable();

@@ -13,6 +13,9 @@
             <optgroup label="Fakultas FEB">
                 <option value="S2 Magister Manajemen" {{ ($queryProdi ?? '') == 'S2 Magister Manajemen' ? 'selected' : '' }}>S2 Magister Manajemen</option>
                 <option value="S1 Manajemen" {{ ($queryProdi ?? '') == 'S1 Manajemen' ? 'selected' : '' }}>S1 Manajemen</option>
+                <option value="S1 Akuntansi" {{ ($queryProdi ?? '') == 'S1 Akuntansi' ? 'selected' : '' }}>S1 Akuntansi</option>
+                <option value="S1 Ekonomi Pembangunan" {{ ($queryProdi ?? '') == 'S1 Ekonomi Pembangunan' ? 'selected' : '' }}>S1 Ekonomi Pembangunan</option>
+                <option value="D3 Keuangan dan Perbankan" {{ ($queryProdi ?? '') == 'D3 Keuangan dan Perbankan' ? 'selected' : '' }}>D3 Keuangan dan Perbankan</option>
             </optgroup>
             <optgroup label="Fakultas FSTI">
                 <option value="S1 Sistem dan Teknologi Informasi (STI)" {{ ($queryProdi ?? '') == 'S1 Sistem dan Teknologi Informasi (STI)' ? 'selected' : '' }}>S1 Sistem dan Teknologi Informasi (STI)</option>
@@ -29,6 +32,7 @@
     @endif
 
     @php $isUnlocked = isset($kurikulums) && $kurikulums->count() > 0; @endphp
+    <input type="hidden" id="isUnlockedFlag" value="{{ $isUnlocked ? 1 : 0 }}">
 
     <!-- BUTTON TAMBAH + FILTER + SEARCH -->
     <div class="d-flex justify-content-between mb-3 flex-wrap">
@@ -70,7 +74,8 @@
                 <th>No</th>
                 <th>Kurikulum</th>
                 <th>Kode</th>
-                <th>Nama</th>
+                <th>Nama Konsentrasi</th>
+                <th>Sub Konsentrasi</th>
                 <th>Status</th>
                 <th>Aksi</th>
             </tr>
@@ -84,6 +89,7 @@
                 <td>{{ $item->kurikulum->kurikulum ?? '-' }} ({{ $item->kurikulum->program_studi ?? '-' }})</td>
                 <td>{{ $item->kode_konsentrasi }}</td>
                 <td>{{ $item->nama_konsentrasi }}</td>
+                <td>{{ $item->sub_konsentrasi ? implode(', ', $item->sub_konsentrasi) : '-' }}</td>
                 <td>
                     <span class="badge {{ $item->status_verifikasi == 'disetujui' ? 'bg-success' : ($item->status_verifikasi == 'ditolak' ? 'bg-danger' : 'bg-secondary') }}">
                         {{ ucfirst($item->status_verifikasi) }}
@@ -240,7 +246,8 @@
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const isUnlocked = @json($isUnlocked);
+        const isUnlockedInput = document.getElementById('isUnlockedFlag');
+        const isUnlocked = isUnlockedInput && isUnlockedInput.value === '1';
         if (!isUnlocked) return;
 
         const table = $('#konsentrasiTable').DataTable({

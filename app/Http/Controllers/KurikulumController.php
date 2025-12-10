@@ -23,7 +23,7 @@ class KurikulumController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kurikulum' => 'required',
+            'id_kurikulum' => 'required',
             'tahun' => 'required|integer',
             'program_studi' => 'required',
             'dokumen_kurikulum' => 'nullable|mimes:pdf|max:20480',
@@ -36,7 +36,7 @@ class KurikulumController extends Controller
         }
 
         Kurikulum::create([
-            'kurikulum' => $request->kurikulum,
+            'id_kurikulum' => $request->id_kurikulum,
             'tahun' => $request->tahun,
             'program_studi' => $request->program_studi,
             'dokumen_kurikulum' => $filePath,
@@ -55,7 +55,7 @@ class KurikulumController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'kurikulum' => 'required',
+            'id_kurikulum' => 'required',
             'tahun' => 'required|integer',
             'program_studi' => 'required',
             'dokumen_kurikulum' => 'nullable|mimes:pdf|max:20480',
@@ -74,7 +74,7 @@ class KurikulumController extends Controller
         }
 
         $kurikulum->update([
-            'kurikulum' => $request->kurikulum,
+            'id_kurikulum' => $request->id_kurikulum,
             'tahun' => $request->tahun,
             'program_studi' => $request->program_studi,
             'dokumen_kurikulum' => $filePath,

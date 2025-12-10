@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | Student Online</title>
+    <title>Login | SIAKAD Dosen</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -93,7 +93,7 @@
 
     <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
         <div>
-            <div class="title-top">Student Online</div>
+            <div class="title-top">SIAKAD Dosen</div>
 
             <div class="login-box text-center">
 

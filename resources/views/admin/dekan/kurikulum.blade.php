@@ -72,7 +72,7 @@
             @php $modalId = md5($item->id); @endphp
             <tr>
                 <td></td> <!-- nomor otomatis -->
-                <td>{{ $item->kurikulum }}</td>
+                <td>{{ $item->id_kurikulum }}</td>
                 <td>{{ $item->tahun }}</td>
                 <td>{{ $item->program_studi }}</td>
                 <td>
