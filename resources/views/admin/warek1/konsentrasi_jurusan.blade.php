@@ -75,7 +75,7 @@
                     @php
                     $status = $item->status_verifikasi;
                     $badgeClass = $status === 'disetujui' ? 'bg-success' : ($status === 'ditolak' ? 'bg-danger' : 'bg-secondary');
-                    $statusLabel = $status === 'disetujui' ? 'Disetujui' : ($status === 'ditolak' ? 'Ditolak' : ucfirst($status ?? 'pending'));
+                    $statusLabel = $status === 'disetujui' ? 'Disetujui' : ($status === 'ditolak' ? 'Ditolak' : ucfirst($status ?? 'Menunggu'));
                     @endphp
                     <span class="badge {{ $badgeClass }}">{{ $statusLabel }}</span>
                 </td>
