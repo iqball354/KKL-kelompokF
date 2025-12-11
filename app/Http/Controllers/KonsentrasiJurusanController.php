@@ -19,13 +19,11 @@ class KonsentrasiJurusanController extends Controller
 
         // Password per program studi
         $validPasswords = [
-            // Fakultas FEB
             'S2 Magister Manajemen' => 'mm123',
             'S1 Manajemen' => 'm123',
             'S1 Akuntansi' => 'ak123',
             'S1 Ekonomi Pembangunan' => 'ep123',
             'D3 Keuangan dan Perbankan' => 'kb123',
-            // Fakultas FSTI
             'S1 Sistem dan Teknologi Informasi' => 'sti123',
             'S1 Rekayasa Perangkat Lunak' => 'rpl123'
         ];
@@ -54,7 +52,7 @@ class KonsentrasiJurusanController extends Controller
             'kurikulum_id' => 'required|exists:kurikulums,id',
             'kode_konsentrasi' => 'required|string|unique:konsentrasi_jurusan,kode_konsentrasi',
             'nama_konsentrasi' => 'required|string',
-            'deskripsi' => 'nullable|string',          // << validasi deskripsi
+            'deskripsi' => 'nullable|string',
             'sub_konsentrasi' => 'nullable|array',
         ]);
 
@@ -62,7 +60,7 @@ class KonsentrasiJurusanController extends Controller
             'kurikulum_id' => $request->kurikulum_id,
             'kode_konsentrasi' => $request->kode_konsentrasi,
             'nama_konsentrasi' => $request->nama_konsentrasi,
-            'deskripsi' => $request->deskripsi,        // << simpan deskripsi
+            'deskripsi' => $request->deskripsi,
             'sub_konsentrasi' => $request->sub_konsentrasi,
             'status_verifikasi' => 'menunggu',
         ]);
@@ -76,7 +74,7 @@ class KonsentrasiJurusanController extends Controller
             'kurikulum_id' => 'required|exists:kurikulums,id',
             'kode_konsentrasi' => 'required|string|unique:konsentrasi_jurusan,kode_konsentrasi,' . $id,
             'nama_konsentrasi' => 'required|string',
-            'deskripsi' => 'nullable|string',          // << validasi deskripsi
+            'deskripsi' => 'nullable|string',
             'sub_konsentrasi' => 'nullable|array',
         ]);
 
@@ -85,7 +83,7 @@ class KonsentrasiJurusanController extends Controller
             'kurikulum_id' => $request->kurikulum_id,
             'kode_konsentrasi' => $request->kode_konsentrasi,
             'nama_konsentrasi' => $request->nama_konsentrasi,
-            'deskripsi' => $request->deskripsi,        // << update deskripsi
+            'deskripsi' => $request->deskripsi,
             'sub_konsentrasi' => $request->sub_konsentrasi,
             'status_verifikasi' => 'menunggu',
             'verifikasi_by' => null,
@@ -104,22 +102,52 @@ class KonsentrasiJurusanController extends Controller
     }
 
     // =========================
-    // Dekan & Warek1 - Read Only
+    // Dekan - Read Only dengan kunci fakultas
     // =========================
-    public function showForDekan()
+    public function showForDekan(Request $request)
     {
-        // Tidak perlu password dan tidak perlu memilih fakultas
+        $fakultas = $request->input('fakultas');
+        $password = $request->input('password');
         $error = null;
+        $data = collect([]);
 
-        // Ambil semua data konsentrasi
-        $data = KonsentrasiJurusan::with('kurikulum', 'verifier')->get();
+        $dekanPasswords = [
+            'FEB' => 'feb123',
+            'FSTI' => 'fsti123',
+        ];
 
-        // Variabel fakultas tetap dikirim untuk mencegah error di Blade
-        $fakultas = null;
+        $fakultasProdi = [
+            'FEB' => [
+                'S2 Magister Manajemen',
+                'S1 Manajemen',
+                'S1 Akuntansi',
+                'S1 Ekonomi Pembangunan',
+                'D3 Keuangan dan Perbankan'
+            ],
+            'FSTI' => [
+                'S1 Sistem dan Teknologi Informasi',
+                'S1 Rekayasa Perangkat Lunak'
+            ]
+        ];
+
+        if ($fakultas && $password) {
+            if (isset($dekanPasswords[$fakultas]) && $dekanPasswords[$fakultas] === $password) {
+                if (isset($fakultasProdi[$fakultas])) {
+                    $data = KonsentrasiJurusan::with('kurikulum')
+                        ->whereIn('kurikulum_id', Kurikulum::whereIn('program_studi', $fakultasProdi[$fakultas])->pluck('id'))
+                        ->get();
+                }
+            } else {
+                $error = "Password Dekan salah.";
+            }
+        }
 
         return view('admin.dekan.konsentrasi_jurusan', compact('data', 'fakultas', 'error'));
     }
 
+    // =========================
+    // Warek1 - Read Only
+    // =========================
     public function showForWarek1()
     {
         $data = KonsentrasiJurusan::with('kurikulum', 'verifier')->get();

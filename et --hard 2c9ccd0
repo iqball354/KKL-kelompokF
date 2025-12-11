@@ -1,0 +1,45 @@
+[33m21cb1d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mkembali-ke-commit-4[m[33m, [m[1;31morigin/project-day-4[m[33m, [m[1;32mkembali-ke-commit[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m2c9ccd0[m HEAD@{1}: commit: meperbarui kosentrasi jurusan kaprodi dan akademik
+[33m21cb1d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mkembali-ke-commit-4[m[33m, [m[1;31morigin/project-day-4[m[33m, [m[1;32mkembali-ke-commit[m[33m)[m HEAD@{2}: reset: moving to 21cb1d2e8f0e260e1ae8be5d8f24d3ebbf857c90
+[33m21cb1d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mkembali-ke-commit-4[m[33m, [m[1;31morigin/project-day-4[m[33m, [m[1;32mkembali-ke-commit[m[33m)[m HEAD@{3}: reset: moving to 21cb1d2e8f0e260e1ae8be5d8f24d3ebbf857c90
+[33m21cb1d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mkembali-ke-commit-4[m[33m, [m[1;31morigin/project-day-4[m[33m, [m[1;32mkembali-ke-commit[m[33m)[m HEAD@{4}: checkout: moving from kembali-ke-commit to kembali-ke-commit-4
+[33m21cb1d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mkembali-ke-commit-4[m[33m, [m[1;31morigin/project-day-4[m[33m, [m[1;32mkembali-ke-commit[m[33m)[m HEAD@{5}: checkout: moving from 21cb1d2e8f0e260e1ae8be5d8f24d3ebbf857c90 to kembali-ke-commit
+[33m21cb1d2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mkembali-ke-commit-4[m[33m, [m[1;31morigin/project-day-4[m[33m, [m[1;32mkembali-ke-commit[m[33m)[m HEAD@{6}: checkout: moving from project-day-4 to 21cb1d2e8f0e260e1ae8be5d8f24d3ebbf857c90
+[33mcadb72b[m[33m ([m[1;32mproject-day-4[m[33m)[m HEAD@{7}: commit: Menambahkan KonsentrasiJurusan: model, controller, migration, dan view
+[33me915d90[m[33m ([m[1;31morigin/project-day-3[m[33m)[m HEAD@{8}: checkout: moving from e915d904f0ead400a46ad2af885830127497d796 to project-day-4
+[33me915d90[m[33m ([m[1;31morigin/project-day-3[m[33m)[m HEAD@{9}: checkout: moving from project-day-3 to e915d904f0ead400a46ad2af885830127497d796
+[33m2b06c44[m[33m ([m[1;32mproject-day-3[m[33m, [m[1;32mproject-day-2[m[33m)[m HEAD@{10}: reset: moving to HEAD
+[33m2b06c44[m[33m ([m[1;32mproject-day-3[m[33m, [m[1;32mproject-day-2[m[33m)[m HEAD@{11}: checkout: moving from project-day-3 to project-day-3
+[33m2b06c44[m[33m ([m[1;32mproject-day-3[m[33m, [m[1;32mproject-day-2[m[33m)[m HEAD@{12}: merge project-day-2: Fast-forward
+[33m33e4839[m HEAD@{13}: checkout: moving from project-day-2 to project-day-3
+[33m2b06c44[m[33m ([m[1;32mproject-day-3[m[33m, [m[1;32mproject-day-2[m[33m)[m HEAD@{14}: checkout: moving from project-day-3 to project-day-2
+[33m33e4839[m HEAD@{15}: checkout: moving from project-day-2 to project-day-3
+[33m2b06c44[m[33m ([m[1;32mproject-day-3[m[33m, [m[1;32mproject-day-2[m[33m)[m HEAD@{16}: commit: Simpan perubahan sebelum pindah branch
+[33me4ca04c[m HEAD@{17}: commit: Tambah fitur menambahkan popup hapus
+[33mf40077a[m[33m ([m[1;31morigin/project-day-2[m[33m)[m HEAD@{18}: pull origin project-day-2: Fast-forward
+[33m72a37a7[m HEAD@{19}: checkout: moving from project-day-2 to project-day-2
+[33m72a37a7[m HEAD@{20}: commit: perbaiki tambah bidang keahlian dosen yang duplikasih nama dan memperbarui tampilan
+[33m62d5d33[m HEAD@{21}: pull origin project-day-2: Fast-forward
+[33md2b7419[m HEAD@{22}: checkout: moving from project-day-2 to project-day-2
+[33md2b7419[m HEAD@{23}: commit: Menambahkan fitur keahlian dosen dan bidang keahlian dosen dan kaprodi di pebarui
+[33m07a43df[m HEAD@{24}: rebase (finish): returning to refs/heads/project-day-2
+[33m07a43df[m HEAD@{25}: rebase (continue): update layout semua role, perbaikan sidebar, dan perbaikan login
+[33m33e4839[m HEAD@{26}: pull origin project-day-2 --rebase (start): checkout 33e4839e0c986cffd6fc46eff9fdf7fd9bb90caf
+[33mf933a9d[m HEAD@{27}: commit: update layout semua role, perbaikan sidebar, dan perbaikan login
+[33m4fe8ccf[m HEAD@{28}: checkout: moving from project-day-2 to project-day-2
+[33m4fe8ccf[m HEAD@{29}: checkout: moving from main to project-day-2
+[33m736e089[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mrestore-data[m[33m, [m[1;32mmain[m[33m)[m HEAD@{30}: checkout: moving from main to main
+[33m736e089[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mrestore-data[m[33m, [m[1;32mmain[m[33m)[m HEAD@{31}: checkout: moving from main to main
+[33m736e089[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mrestore-data[m[33m, [m[1;32mmain[m[33m)[m HEAD@{32}: checkout: moving from 736e089aad9145f44ddef7668a493c918554d269 to main
+[33m736e089[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mrestore-data[m[33m, [m[1;32mmain[m[33m)[m HEAD@{33}: checkout: moving from restore-data to 736e089
+[33m736e089[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mrestore-data[m[33m, [m[1;32mmain[m[33m)[m HEAD@{34}: checkout: moving from 736e089aad9145f44ddef7668a493c918554d269 to restore-data
+[33m736e089[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mrestore-data[m[33m, [m[1;32mmain[m[33m)[m HEAD@{35}: checkout: moving from main to main
+[33m736e089[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mrestore-data[m[33m, [m[1;32mmain[m[33m)[m HEAD@{36}: checkout: moving from project-day-3 to main
+[33m4fe8ccf[m HEAD@{37}: reset: moving to HEAD
+[33m4fe8ccf[m HEAD@{38}: checkout: moving from project-day-3 to project-day-3
+[33m4fe8ccf[m HEAD@{39}: checkout: moving from project-day-2 to project-day-3
+[33m4fe8ccf[m HEAD@{40}: commit: update besar: tambah layout admin, hapus file lama, tambah asset, controller, dan migration baru
+[33m736e089[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mrestore-data[m[33m, [m[1;32mmain[m[33m)[m HEAD@{41}: checkout: moving from project-day-2 to project-day-2
+[33m736e089[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mrestore-data[m[33m, [m[1;32mmain[m[33m)[m HEAD@{42}: checkout: moving from fitur-baru to project-day-2
+[33m736e089[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mrestore-data[m[33m, [m[1;32mmain[m[33m)[m HEAD@{43}: checkout: moving from main to fitur-baru
+[33m736e089[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mrestore-data[m[33m, [m[1;32mmain[m[33m)[m HEAD@{44}: clone: from https://github.com/iqball354/KKL-kelompokF.git
