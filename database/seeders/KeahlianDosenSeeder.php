@@ -45,7 +45,7 @@ class KeahlianDosenSeeder extends Seeder
                 'deskripsi_pendidikan' => json_encode(['S1 Fisika, S2 Kimia Analitik']),
                 'tahun_pendidikan' => json_encode([2012, 2016]),
                 'link' => json_encode(['https://portfolio.example.com/rina']),
-                'status_kaprodi' => 'pending',
+                'status_kaprodi' => 'menunggu',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

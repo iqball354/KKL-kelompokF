@@ -1,9 +1,9 @@
-@extends('admin.layout.akademik.main')
+@extends('admin.layout.dekan.main')
 @section('title', 'Data Konsentrasi Jurusan')
 
 @section('content')
 <div class="container mt-5">
-    <h2>Verifikasi Konsentrasi Jurusan</h2>
+    <h2>Data Konsentrasi Jurusan - Fakultas {{ $fakultasName ?? '' }}</h2>
 
     @if(isset($error))
     <div class="alert alert-danger">{{ $error }}</div>
@@ -12,7 +12,7 @@
     @php $isUnlocked = true; @endphp
     <input type="hidden" id="isUnlockedFlag" value="1">
 
-    <!-- FILTER TABEL -->
+    <!-- FILTER TABEL: Tampilkan entri (kiri) + Status & Cari (kanan) -->
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <div class="d-flex align-items-center gap-2">
             <label class="d-flex align-items-center gap-1 mb-0">
@@ -33,7 +33,7 @@
                 <select id="statusFilter" class="form-select d-inline-block w-auto">
                     <option value="">Semua Status</option>
                     <option value="disetujui">Disetujui</option>
-                    <option value="menunggu">Menunggu</option>
+                    <option value="pending">Pending</option>
                     <option value="ditolak">Ditolak</option>
                 </select>
             </label>
@@ -61,8 +61,9 @@
             </tr>
         </thead>
         <tbody>
+            @if($isUnlocked)
             @foreach ($data as $item)
-            @php $modalId = md5($item->id); @endphp
+            @if(str_contains($item->kurikulum->program_studi ?? '', $fakultasName))
             <tr>
                 <td></td>
                 <td>
@@ -76,46 +77,32 @@
                     @php
                     $status = $item->status_verifikasi;
                     $badgeClass = $status === 'disetujui' ? 'bg-success' : ($status === 'ditolak' ? 'bg-danger' : 'bg-secondary');
-                    $statusLabel = $status === 'disetujui' ? 'Disetujui' : ($status === 'ditolak' ? 'Ditolak' : ucfirst($status ?? 'menunggu'));
+                    $statusLabel = $status === 'disetujui' ? 'Disetujui' : ($status === 'ditolak' ? 'Ditolak' : ucfirst($status ?? 'pending'));
                     @endphp
                     <span class="badge {{ $badgeClass }}">
                         {{ $statusLabel }}
                     </span>
                 </td>
                 <td>
-                    <!-- Tombol View -->
+                    <!-- Tombol View Saja -->
                     <button class="btn btn-info btn-sm viewBtn"
                         data-nama="{{ $item->nama_konsentrasi }}"
                         data-kode="{{ $item->kode_konsentrasi }}"
                         data-kurikulum="{{ $item->kurikulum->kurikulum ?? '' }} ({{ $item->kurikulum->program_studi ?? '' }})"
                         data-sub="{{ json_encode($item->sub_konsentrasi) }}"
-                        data-deskripsi="{{ $item->deskripsi ?? '' }}"
-                        data-alasan="{{ $item->alasan_verifikasi ?? '' }}">
+                        data-deskripsi="{{ $item->deskripsi ?? '' }}">
                         <i class="fas fa-eye"></i>
                     </button>
-
-                    <!-- Tombol Setujui -->
-                    @if($item->status_verifikasi != 'disetujui')
-                    <button class="btn btn-success btn-sm approveBtn"
-                        data-id="{{ $item->id }}"
-                        data-nama="{{ $item->nama_konsentrasi }}"
-                        data-alasan="{{ $item->alasan_verifikasi ?? '' }}">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    @endif
-
-                    <!-- Tombol Tolak -->
-                    @if($item->status_verifikasi != 'ditolak')
-                    <button class="btn btn-danger btn-sm rejectBtn"
-                        data-id="{{ $item->id }}"
-                        data-nama="{{ $item->nama_konsentrasi }}"
-                        data-alasan="{{ $item->alasan_verifikasi ?? '' }}">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    @endif
                 </td>
             </tr>
+            @endif
             @endforeach
+            @else
+            <tr>
+                <td></td>
+                <td colspan="6" class="text-center">Tidak ada data untuk ditampilkan</td>
+            </tr>
+            @endif
         </tbody>
     </table>
 </div>
@@ -135,68 +122,10 @@
                 <p><strong>Sub Konsentrasi:</strong></p>
                 <ul id="viewSub"></ul>
                 <p><strong>Deskripsi:</strong> <span id="viewDeskripsi"></span></p>
-                <p><strong>Alasan Verifikasi:</strong> <span id="viewAlasan"></span></p>
             </div>
         </div>
     </div>
 </div>
-
-<!-- MODAL SETUJUI -->
-<div class="modal fade" id="approveModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Setujui Konsentrasi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST" id="approveForm">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <p>Apakah Anda yakin ingin menyetujui konsentrasi <strong id="approveNama"></strong>?</p>
-                    <div class="mb-3">
-                        <label>Alasan (opsional)</label>
-                        <textarea name="alasan_verifikasi" id="approveAlasan" class="form-control" rows="2"></textarea>
-                    </div>
-                    <input type="hidden" name="status_verifikasi" value="disetujui">
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Setujui</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- MODAL TOLAK -->
-<div class="modal fade" id="rejectModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tolak Konsentrasi</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form method="POST" id="rejectForm">
-                @csrf
-                @method('PUT')
-                <div class="modal-body">
-                    <p>Apakah Anda yakin ingin menolak konsentrasi <strong id="rejectNama"></strong>?</p>
-                    <div class="mb-3">
-                        <label>Alasan Penolakan</label>
-                        <textarea name="alasan_verifikasi" id="rejectAlasan" class="form-control" rows="2" required></textarea>
-                    </div>
-                    <input type="hidden" name="status_verifikasi" value="ditolak">
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger">Tolak</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 @endsection
 
 @section('scripts')
@@ -219,38 +148,43 @@
             ]
         });
 
+        // Nomor urut otomatis
         table.on('order.dt search.dt draw.dt', function() {
             let i = 1;
             table.column(0, {
                     search: 'applied',
                     order: 'applied',
                     page: 'current'
-                }).nodes()
-                .each(cell => cell.innerHTML = i++);
+                })
+                .nodes().each(cell => cell.innerHTML = i++);
         }).draw();
 
+        // Show entries
         document.getElementById('entriesSelect').addEventListener('change', function() {
             table.page.len(this.value).draw();
         });
 
+        // Filter status
         document.getElementById('statusFilter').addEventListener('change', function() {
             table.column(5).search(this.value.toLowerCase()).draw();
         });
 
-        document.getElementById('searchButton').addEventListener('click', () => table.search(document.getElementById('searchInput').value).draw());
+        // Search
+        document.getElementById('searchButton').addEventListener('click', () =>
+            table.search(document.getElementById('searchInput').value).draw()
+        );
         document.getElementById('searchInput').addEventListener('keyup', e => {
             if (e.key === 'Enter') table.search(e.target.value).draw();
         });
 
-        // VIEW modal
+        // View modal
         document.addEventListener('click', e => {
             const btn = e.target.closest('.viewBtn');
             if (!btn) return;
+
             document.getElementById('viewKurikulum').innerText = btn.dataset.kurikulum;
             document.getElementById('viewKode').innerText = btn.dataset.kode;
             document.getElementById('viewNama').innerText = btn.dataset.nama;
-            document.getElementById('viewDeskripsi').innerText = btn.dataset.deskripsi || '-';
-            document.getElementById('viewAlasan').innerText = btn.dataset.alasan || '-';
 
             const subList = document.getElementById('viewSub');
             subList.innerHTML = '';
@@ -267,31 +201,8 @@
                 subList.appendChild(li);
             }
 
+            document.getElementById('viewDeskripsi').innerText = btn.dataset.deskripsi || '-';
             new bootstrap.Modal(document.getElementById('viewModal')).show();
-        });
-
-        // APPROVE modal
-        const approveModalEl = new bootstrap.Modal(document.getElementById('approveModal'));
-        document.querySelectorAll('.approveBtn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = this.dataset.id;
-                document.getElementById('approveForm').action = `/akademik/konsentrasi/${id}/verifikasi`;
-                document.getElementById('approveNama').innerText = this.dataset.nama;
-                document.getElementById('approveAlasan').value = this.dataset.alasan || '';
-                approveModalEl.show();
-            });
-        });
-
-        // REJECT modal
-        const rejectModalEl = new bootstrap.Modal(document.getElementById('rejectModal'));
-        document.querySelectorAll('.rejectBtn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = this.dataset.id;
-                document.getElementById('rejectForm').action = `/akademik/konsentrasi/${id}/verifikasi`;
-                document.getElementById('rejectNama').innerText = this.dataset.nama;
-                document.getElementById('rejectAlasan').value = this.dataset.alasan || '';
-                rejectModalEl.show();
-            });
         });
     });
 </script>

@@ -5,28 +5,35 @@
 <div class="container mt-5">
     <h2>Daftar Kurikulum</h2>
 
-    <!-- FILTER & SEARCH -->
-    <div class="d-flex justify-content-between mb-3 flex-wrap gap-3">
-        <!-- Show entries -->
-        <div>
-            <label>
-                Tampilkan
-                <select id="entriesSelect" class="form-select d-inline-block w-auto">
-                    <option value="10" selected>10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                </select>
-                entri
-            </label>
+    <!-- FILTER BAR -->
+    <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
+        <!-- KIRI -->
+        <div class="d-flex align-items-center gap-2">
+            <label class="mb-0">Tampilkan</label>
+            <select id="entriesSelect" class="form-select d-inline-block w-auto">
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+            </select>
+            <span>entri</span>
         </div>
 
-        <!-- Search -->
-        <div class="input-group" style="width: 280px;">
-            <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
-            <button class="btn btn-primary" id="searchButton">
-                <i class="fas fa-search"></i>
-            </button>
+        <!-- KANAN -->
+        <div class="d-flex align-items-center gap-2">
+            <label class="mb-0">Status:</label>
+            <select id="statusFilter" class="form-select" style="width: 130px;">
+                <option value="">Semua Status</option>
+                <option value="aktif">Aktif</option>
+                <option value="nonaktif">Nonaktif</option>
+            </select>
+
+            <div class="input-group" style="width: 280px;">
+                <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
+                <button class="btn btn-primary" id="searchButton">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
         </div>
     </div>
 

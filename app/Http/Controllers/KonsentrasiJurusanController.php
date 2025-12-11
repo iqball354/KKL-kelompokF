@@ -26,8 +26,8 @@ class KonsentrasiJurusanController extends Controller
             'S1 Ekonomi Pembangunan' => 'ep123',
             'D3 Keuangan dan Perbankan' => 'kb123',
             // Fakultas FSTI
-            'S1 Sistem dan Teknologi Informasi (STI)' => 'sti123',
-            'S1 Rekayasa Perangkat Lunak (RPL)' => 'rpl123'
+            'S1 Sistem dan Teknologi Informasi' => 'sti123',
+            'S1 Rekayasa Perangkat Lunak' => 'rpl123'
         ];
 
         $data = collect([]);
@@ -36,7 +36,6 @@ class KonsentrasiJurusanController extends Controller
 
         if ($queryProdi && $password) {
             if (isset($validPasswords[$queryProdi]) && $validPasswords[$queryProdi] === $password) {
-                // Ambil semua kurikulum untuk prodi itu
                 $kurikulums = Kurikulum::where('program_studi', $queryProdi)->get();
                 $data = KonsentrasiJurusan::with('kurikulum')
                     ->whereIn('kurikulum_id', $kurikulums->pluck('id'))
@@ -55,6 +54,7 @@ class KonsentrasiJurusanController extends Controller
             'kurikulum_id' => 'required|exists:kurikulums,id',
             'kode_konsentrasi' => 'required|string|unique:konsentrasi_jurusan,kode_konsentrasi',
             'nama_konsentrasi' => 'required|string',
+            'deskripsi' => 'nullable|string',          // << validasi deskripsi
             'sub_konsentrasi' => 'nullable|array',
         ]);
 
@@ -62,6 +62,7 @@ class KonsentrasiJurusanController extends Controller
             'kurikulum_id' => $request->kurikulum_id,
             'kode_konsentrasi' => $request->kode_konsentrasi,
             'nama_konsentrasi' => $request->nama_konsentrasi,
+            'deskripsi' => $request->deskripsi,        // << simpan deskripsi
             'sub_konsentrasi' => $request->sub_konsentrasi,
             'status_verifikasi' => 'menunggu',
         ]);
@@ -75,6 +76,7 @@ class KonsentrasiJurusanController extends Controller
             'kurikulum_id' => 'required|exists:kurikulums,id',
             'kode_konsentrasi' => 'required|string|unique:konsentrasi_jurusan,kode_konsentrasi,' . $id,
             'nama_konsentrasi' => 'required|string',
+            'deskripsi' => 'nullable|string',          // << validasi deskripsi
             'sub_konsentrasi' => 'nullable|array',
         ]);
 
@@ -83,8 +85,9 @@ class KonsentrasiJurusanController extends Controller
             'kurikulum_id' => $request->kurikulum_id,
             'kode_konsentrasi' => $request->kode_konsentrasi,
             'nama_konsentrasi' => $request->nama_konsentrasi,
+            'deskripsi' => $request->deskripsi,        // << update deskripsi
             'sub_konsentrasi' => $request->sub_konsentrasi,
-            'status_verifikasi' => 'pending',
+            'status_verifikasi' => 'menunggu',
             'verifikasi_by' => null,
             'verifikasi_at' => null,
             'alasan_verifikasi' => null,

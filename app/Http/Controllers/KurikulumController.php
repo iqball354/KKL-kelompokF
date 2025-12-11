@@ -120,8 +120,8 @@ class KurikulumController extends Controller
                 'D3 Keuangan dan Perbankan'
             ],
             'FSTI' => [
-                'S1 Sistem dan Teknologi Informasi (STI)',
-                'S1 Rekayasa Perangkat Lunak (RPL)'
+                'S1 Sistem dan Teknologi Informasi',
+                'S1 Rekayasa Perangkat Lunak'
             ]
         ];
 
@@ -164,9 +164,10 @@ class KurikulumController extends Controller
             'S1 Akuntansi' => 'ak123',
             'S1 Ekonomi Pembangunan' => 'ep123',
             'D3 Keuangan dan Perbankan' => 'kb123',
+
             // Fakultas FSTI
-            'S1 Sistem dan Teknologi Informasi (STI)' => 'sti123',
-            'S1 Rekayasa Perangkat Lunak (RPL)' => 'rpl123'
+            'S1 Sistem dan Teknologi Informasi' => 'sti123',
+            'S1 Rekayasa Perangkat Lunak' => 'rpl123'
         ];
 
         $data = collect([]);
