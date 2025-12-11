@@ -5,8 +5,8 @@
 <div class="container mt-5">
     <h2>Daftar Kurikulum</h2>
 
-    <!-- FILTER & SEARCH -->
-    <div class="d-flex justify-content-between mb-3 flex-wrap gap-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
+
         <!-- Show entries -->
         <div>
             <label>
@@ -21,24 +21,29 @@
             </label>
         </div>
 
-        <!-- Filter Status -->
-        <div>
-            <label>
-                Status:
-                <select id="filterStatus" class="form-select d-inline-block w-auto">
-                    <option value="">Semua Status</option>
-                    <option value="aktif">Aktif</option>
-                    <option value="nonaktif">Nonaktif</option>
-                </select>
-            </label>
-        </div>
+        <!-- Grup Search + Status di kanan -->
+        <div class="d-flex align-items-center gap-3 ms-auto">
 
-        <!-- Search -->
-        <div class="input-group" style="width: 280px;">
-            <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
-            <button class="btn btn-primary" id="searchButton" type="button">
-                <i class="fas fa-search"></i>
-            </button>
+            <!-- Status -->
+            <div>
+                <label>
+                    Status:
+                    <select id="filterStatus" class="form-select d-inline-block w-auto">
+                        <option value="">Semua Status</option>
+                        <option value="aktif">Aktif</option>
+                        <option value="nonaktif">Nonaktif</option>
+                    </select>
+                </label>
+            </div>
+
+            <!-- Search -->
+            <div class="input-group" style="width: 280px;">
+                <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
+                <button class="btn btn-primary" id="searchButton" type="button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
         </div>
     </div>
 
@@ -55,6 +60,7 @@
     <table class="my-table table table-striped" id="kurikulumTable">
         <thead>
             <tr>
+                <th>No</th>
                 <th>ID Kurikulum</th>
                 <th>Tahun</th>
                 <th>Program Studi</th>
@@ -64,9 +70,10 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($data as $item)
+            @foreach($data as $index => $item)
             @php $modalId = md5($item->id); @endphp
             <tr>
+                <td>{{ $index + 1 }}</td>
                 <td>{{ $item->id_kurikulum }}</td>
                 <td>{{ $item->tahun }}</td>
                 <td>{{ $item->program_studi }}</td>
@@ -113,7 +120,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    Apakah Anda yakin ingin menghapus kurikulum <strong>{{ $item->kurikulum }}</strong>?
+                                    Apakah Anda yakin ingin menghapus kurikulum <strong>{{ $item->id_kurikulum }}</strong>?
                                 </div>
                                 <div class="modal-footer">
                                     <form action="{{ route('akademik.kurikulum.destroy', $item->id) }}" method="POST">
@@ -174,19 +181,23 @@
                 <input type="hidden" name="_method" id="formMethod" value="POST">
                 <input type="hidden" name="id" id="kurikulumId">
                 <input type="hidden" name="existing_dokumen" id="existingDocument">
+
                 <div class="modal-header">
                     <h5 id="formTitle" class="modal-title">Tambah Kurikulum</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+
                 <div class="modal-body">
                     <div class="mb-3">
                         <label>id Kurikulum</label>
                         <input type="text" name="id_kurikulum" id="id_kurikulum" class="form-control" required>
                     </div>
+
                     <div class="mb-3">
                         <label>Tahun</label>
                         <input type="number" name="tahun" id="tahun" class="form-control" required>
                     </div>
+
                     <div class="mb-3">
                         <label>Program Studi</label>
                         <select name="program_studi" id="program_studi" class="form-select" required>
@@ -197,20 +208,25 @@
                                 <option value="S1 Ekonomi Pembangunan">S1 Ekonomi Pembangunan</option>
                                 <option value="D3 Keuangan dan Perbankan">D3 Keuangan dan Perbankan</option>
                             </optgroup>
+
                             <optgroup label="Fakultas Sains, Teknologi dan Industri (FSTI)">
-                                <option value="S1 Sistem dan Teknologi Informasi (STI)">S1 Sistem dan Teknologi Informasi (STI)</option>
-                                <option value="S1 Rekayasa Perangkat Lunak (RPL)">S1 Rekayasa Perangkat Lunak (RPL)</option>
+                                <option value="S1 Sistem dan Teknologi Informasi">S1 Sistem dan Teknologi Informasi</option>
+                                <option value="S1 Rekayasa Perangkat Lunak">S1 Rekayasa Perangkat Lunak</option>
                             </optgroup>
                         </select>
                     </div>
+
                     <div class="mb-3">
                         <label>Dokumen Kurikulum (PDF/Office)</label>
                         <input type="file" name="dokumen_kurikulum" id="dokumen_kurikulum" class="form-control">
                         <div id="currentDocWrapper" class="mt-2" style="display:none;">
                             <small>Dokumen saat ini: <a href="#" target="_blank" id="currentDocLink"></a></small>
-                            <div><small class="text-muted">Jika tidak ingin mengganti dokumen, biarkan file kosong.</small></div>
+                            <div>
+                                <small class="text-muted">Jika tidak ingin mengganti dokumen, biarkan file kosong.</small>
+                            </div>
                         </div>
                     </div>
+
                     <div class="mb-3">
                         <label>Status</label>
                         <select name="status" id="status" class="form-select" required>
@@ -219,6 +235,7 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="modal-footer">
                     <button class="btn btn-primary">Simpan</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -232,7 +249,7 @@
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // DataTable
+
         const table = $('#kurikulumTable').DataTable({
             "order": [
                 [1, "desc"]
@@ -240,23 +257,37 @@
             "pageLength": 10,
             "dom": 't<"d-flex justify-content-between mt-3"ip>',
             columnDefs: [{
-                targets: [3, 5],
+                targets: [0, 4, 6],
                 orderable: false
-            }]
+            }] // Kolom No, Dokumen, Aksi
         });
 
-        // Search & Entries
+        // Nomor otomatis
+        table.on('order.dt search.dt', function() {
+            table.column(0, {
+                search: 'applied',
+                order: 'applied'
+            }).nodes().each(function(cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
+
+        // Search
         document.getElementById('searchButton').addEventListener('click', () =>
             table.search(document.getElementById('searchInput').value).draw()
         );
         document.getElementById('searchInput').addEventListener('keyup', e => {
             if (e.key === 'Enter') table.search(e.target.value).draw();
         });
+
+        // Entries per page
         document.getElementById('entriesSelect').addEventListener('change', function() {
             table.page.len(this.value).draw();
         });
+
+        // Filter Status
         document.getElementById('filterStatus').addEventListener('change', function() {
-            table.column(4).search(this.value).draw();
+            table.column(5).search(this.value).draw();
         });
 
         const form = document.getElementById('kurikulumForm');
@@ -314,6 +345,7 @@
             document.getElementById('formMethod').value = 'PUT';
             bsModal.show();
         });
+
     });
 </script>
 @endsection

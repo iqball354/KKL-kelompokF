@@ -5,37 +5,47 @@
 <div class="container mt-5">
     <h2>Daftar Kurikulum</h2>
 
-    <!-- KIRI ATAS: Form Prodi + Password -->
-    <form method="GET" class="mb-3 d-flex gap-2 align-items-center flex-wrap">
-        <label class="mb-0">Program Studi:</label>
-        <select name="prodi" class="form-select" style="width: 220px;" required>
-            <option value="">Pilih Program Studi</option>
-            <!-- Fakultas FEB -->
-            <optgroup label="Fakultas Ekonomi dan Bisnis (FEB)">
-                <option value="S2 Magister Manajemen">S2 Magister Manajemen</option>
-                <option value="S1 Manajemen">S1 Manajemen</option>
-                <option value="S1 Akuntansi">S1 Akuntansi</option>
-                <option value="S1 Ekonomi Pembangunan">S1 Ekonomi Pembangunan</option>
-                <option value="D3 Keuangan dan Perbankan">D3 Keuangan dan Perbankan</option>
-            </optgroup>
-            <!-- Fakultas FSTI -->
-            <optgroup label="Fakultas Sains, Teknologi dan Industri (FSTI)">
-                <option value="S1 Sistem dan Teknologi Informasi (STI)">S1 Sistem dan Teknologi Informasi (STI)</option>
-                <option value="S1 Rekayasa Perangkat Lunak (RPL)">S1 Rekayasa Perangkat Lunak (RPL)</option>
-            </optgroup>
-        </select>
+    <!-- FORM PRODI + PASSWORD (Dipindah ke Kanan) -->
+    <form method="GET" class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
 
-        <input type="password" name="password" class="form-control" placeholder="kunci" style="width: 150px;" required>
-        <button type="submit" class="btn btn-primary">Tampilkan</button>
+        <!-- Kiri dikosongkan agar form geser ke kanan -->
+        <div></div>
+
+        <!-- Bagian kanan -->
+        <div class="d-flex gap-2 align-items-center flex-wrap">
+            <label class="mb-0">Program Studi:</label>
+
+            <select name="prodi" class="form-select" style="width: 220px;" required>
+                <option value="">Pilih Program Studi</option>
+
+                <optgroup label="Fakultas Ekonomi dan Bisnis (FEB)">
+                    <option value="S2 Magister Manajemen">S2 Magister Manajemen</option>
+                    <option value="S1 Manajemen">S1 Manajemen</option>
+                    <option value="S1 Akuntansi">S1 Akuntansi</option>
+                    <option value="S1 Ekonomi Pembangunan">S1 Ekonomi Pembangunan</option>
+                    <option value="D3 Keuangan dan Perbankan">D3 Keuangan dan Perbankan</option>
+                </optgroup>
+
+                <optgroup label="Fakultas Sains, Teknologi dan Industri (FSTI)">
+                    <option value="S1 Sistem dan Teknologi Informasi">S1 Sistem dan Teknologi Informasi</option>
+                    <option value="S1 Rekayasa Perangkat Lunak">S1 Rekayasa Perangkat Lunak</option>
+                </optgroup>
+            </select>
+
+            <input type="password" name="password" class="form-control" placeholder="kunci" style="width: 150px;" required>
+
+            <button type="submit" class="btn btn-primary">Tampilkan</button>
+        </div>
     </form>
 
     @if(isset($error))
     <div class="alert alert-danger">{{ $error }}</div>
     @endif
 
-    <!-- FILTER BAR: Entries kiri, Status+Search kanan -->
+    <!-- FILTER BAR -->
     <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
-        <!-- KIRI: Show entries -->
+
+        <!-- KIRI -->
         <div class="d-flex align-items-center gap-2">
             <label class="mb-0">Tampilkan</label>
             <select id="entriesSelect" class="form-select d-inline-block w-auto">
@@ -47,11 +57,11 @@
             <span>entri</span>
         </div>
 
-        <!-- KANAN: Status + Search -->
+        <!-- KANAN -->
         <div class="d-flex align-items-center gap-2">
             <label class="mb-0">Status:</label>
-            <select id="statusFilter" class="form-select" style="width: 130px;">
-                <option value="">Semua</option>
+            <select id="statusFilter" class="form-select" style="width: 150px;">
+                <option value="">Semua Status</option>
                 <option value="aktif">Aktif</option>
                 <option value="nonaktif">Nonaktif</option>
             </select>
@@ -69,6 +79,7 @@
     <table class="my-table table table-striped" id="kurikulumTable">
         <thead>
             <tr>
+                <th>No</th>
                 <th>id Kurikulum</th>
                 <th>Tahun</th>
                 <th>Program Studi</th>
@@ -77,9 +88,10 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($data as $item)
+            @foreach ($data as $index => $item)
             @php $modalId = md5($item->id); @endphp
             <tr>
+                <td>{{ $index + 1 }}</td>
                 <td>{{ $item->id_kurikulum }}</td>
                 <td>{{ $item->tahun }}</td>
                 <td>{{ $item->program_studi }}</td>
@@ -103,7 +115,7 @@
     </table>
 </div>
 
-<!-- Modal Dokumen -->
+<!-- MODAL -->
 @foreach ($data as $item)
 @php $modalId = md5($item->id); @endphp
 <div class="modal fade" id="docModal-{{ $modalId }}" tabindex="-1">
@@ -113,9 +125,11 @@
                 <h5 class="modal-title">Dokumen Kurikulum - {{ $item->program_studi }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body">
                 @if ($item->dokumen_kurikulum)
                 @php $ext = strtolower(pathinfo($item->dokumen_kurikulum, PATHINFO_EXTENSION)); @endphp
+
                 @if ($ext == 'pdf')
                 <embed src="{{ asset('storage/' . $item->dokumen_kurikulum) }}" type="application/pdf" width="100%" height="500px">
                 @elseif(in_array($ext, ['doc','docx','xls','xlsx','ppt','pptx']))
@@ -123,10 +137,12 @@
                 @else
                 <a href="{{ asset('storage/' . $item->dokumen_kurikulum) }}" target="_blank">{{ basename($item->dokumen_kurikulum) }}</a>
                 @endif
+
                 @else
                 <p>Tidak ada dokumen</p>
                 @endif
             </div>
+
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
@@ -140,22 +156,28 @@
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
         const table = $('#kurikulumTable').DataTable({
-            "order": [
-                [1, "desc"]
-            ],
+            "order": [[1, "desc"]],
             "pageLength": 10,
             "dom": 't<"d-flex justify-content-between mt-3"ip>',
-            columnDefs: [{
-                targets: [3, 4],
-                orderable: false
-            }]
+            columnDefs: [
+                { targets: [0, 4, 5], orderable: false } // Kolom nomor dan dokumen/status tidak bisa di-sort
+            ]
         });
+
+        // Update nomor otomatis saat paging/filter/search
+        table.on('order.dt search.dt', function () {
+            table.column(0, { search:'applied', order:'applied' }).nodes().each(function(cell, i) {
+                cell.innerHTML = i + 1;
+            });
+        }).draw();
 
         // Search
         document.getElementById('searchButton').addEventListener('click', () =>
             table.search(document.getElementById('searchInput').value).draw()
         );
+
         document.getElementById('searchInput').addEventListener('keyup', (e) => {
             if (e.key === 'Enter') table.search(e.target.value).draw();
         });
@@ -163,13 +185,14 @@
         // Status filter
         $('#statusFilter').on('change', function() {
             const val = $(this).val().toLowerCase();
-            table.column(4).search(val).draw();
+            table.column(5).search(val).draw();
         });
 
         // Entries per page
         document.getElementById('entriesSelect').addEventListener('change', function() {
             table.page.len(this.value).draw();
         });
+
     });
 </script>
 @endsection

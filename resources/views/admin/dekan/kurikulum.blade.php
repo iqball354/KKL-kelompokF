@@ -5,18 +5,29 @@
 <div class="container mt-5">
     <h2>Daftar Kurikulum</h2>
 
-    <!-- FORM FAKULTAS + PASSWORD -->
-    <form method="GET" class="mb-3 d-flex gap-2 align-items-center flex-wrap">
-        <label class="mb-0">Fakultas:</label>
-        <select name="fakultas" class="form-select" style="width: 220px;" required>
-            <option value="">Pilih Fakultas</option>
-            <option value="FEB" {{ (isset($fakultas) && $fakultas == 'FEB') ? 'selected' : '' }}>Fakultas Ekonomi dan Bisnis (FEB)</option>
-            <option value="FSTI" {{ (isset($fakultas) && $fakultas == 'FSTI') ? 'selected' : '' }}>Fakultas Sains, Teknologi dan Industri (FSTI)</option>
-        </select>
+    <!-- FORM FAKULTAS + PASSWORD (Dipindah ke Kanan) -->
+    <form method="GET" class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
 
-        <input type="password" name="password" class="form-control" placeholder="kunci Dekan" style="width: 150px;" required>
+        <!-- KOSONGKAN BAGIAN KIRI (biar form ke kanan) -->
+        <div></div>
 
-        <button type="submit" class="btn btn-primary">Tampilkan</button>
+        <!-- FORM DI KANAN -->
+        <div class="d-flex gap-2 align-items-center flex-wrap">
+            <label class="mb-0">Fakultas:</label>
+            <select name="fakultas" class="form-select" style="width: 220px;" required>
+                <option value="">Pilih Fakultas</option>
+                <option value="FEB" {{ (isset($fakultas) && $fakultas == 'FEB') ? 'selected' : '' }}>
+                    Fakultas Ekonomi dan Bisnis (FEB)
+                </option>
+                <option value="FSTI" {{ (isset($fakultas) && $fakultas == 'FSTI') ? 'selected' : '' }}>
+                    Fakultas Sains, Teknologi dan Industri (FSTI)
+                </option>
+            </select>
+
+            <input type="password" name="password" class="form-control" placeholder="kunci Dekan" style="width:150px;" required>
+
+            <button type="submit" class="btn btn-primary">Tampilkan</button>
+        </div>
     </form>
 
     @if(isset($error))
@@ -25,6 +36,7 @@
 
     <!-- FILTER BAR -->
     <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
+
         <!-- KIRI -->
         <div class="d-flex align-items-center gap-2">
             <label class="mb-0">Tampilkan</label>
@@ -71,7 +83,7 @@
             @foreach ($data as $item)
             @php $modalId = md5($item->id); @endphp
             <tr>
-                <td></td> <!-- nomor otomatis -->
+                <td></td>
                 <td>{{ $item->id_kurikulum }}</td>
                 <td>{{ $item->tahun }}</td>
                 <td>{{ $item->program_studi }}</td>
@@ -150,7 +162,7 @@
             columnDefs: [{
                     targets: 0,
                     orderable: false
-                }, // No
+                },
                 {
                     targets: [4, 5],
                     orderable: false
@@ -158,7 +170,7 @@
             ]
         });
 
-        // ==== NOMOR URUT OTOMATIS ====
+        // Nomor urut otomatis
         table.on('order.dt search.dt draw.dt', function() {
             let i = 1;
             table.column(0, {
@@ -172,22 +184,18 @@
                 });
         }).draw();
 
-        // Search button
         document.getElementById('searchButton').addEventListener('click', () =>
             table.search(document.getElementById('searchInput').value).draw()
         );
 
-        // Enter to search
         document.getElementById('searchInput').addEventListener('keyup', (e) => {
             if (e.key === 'Enter') table.search(e.target.value).draw();
         });
 
-        // Status filter
         $('#statusFilter').on('change', function() {
             table.column(5).search($(this).val()).draw();
         });
 
-        // Entries per page
         document.getElementById('entriesSelect').addEventListener('change', function() {
             table.page.len(this.value).draw();
         });
