@@ -120,7 +120,7 @@ class KonsentrasiJurusanController extends Controller
     public function showForWarek1()
     {
         $data = KonsentrasiJurusan::with('kurikulum', 'verifier')->get();
-        return view('admin.warek1.konsentrasi', compact('data'));
+        return view('admin.warek1.konsentrasi_jurusan', compact('data'));
     }
 
     // =========================
