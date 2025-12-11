@@ -28,7 +28,7 @@
             <span>Kurikulum</span>
         </a>
 
-        <a href="#"
+        <a href="{{ route('dekan.konsentrasi.show') }}"
             class="menu-item {{ request()->routeIs('dekan.konsentrasi.*') ? 'active' : '' }}">
             <i class="fas fa-tools"></i>
             <span>Konsentrasi Jurusan</span>

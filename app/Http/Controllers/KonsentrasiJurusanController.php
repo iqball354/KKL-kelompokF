@@ -103,47 +103,18 @@ class KonsentrasiJurusanController extends Controller
     // =========================
     // Dekan & Warek1 - Read Only
     // =========================
-    public function showForDekan(Request $request)
+    public function showForDekan()
     {
-        // Password per dekan / fakultas
-        $dekanPasswords = [
-            'FEB' => 'feb123',
-            'FSTI' => 'fsti123',
-        ];
-
-        $fakultas = $request->input('fakultas');
-        $password = $request->input('password');
+        // Tidak perlu password dan tidak perlu memilih fakultas
         $error = null;
-        $data = collect([]);
 
-        $fakultasProdi = [
-            'FEB' => [
-                'S2 Magister Manajemen',
-                'S1 Manajemen',
-                'S1 Akuntansi',
-                'S1 Ekonomi Pembangunan',
-                'D3 Keuangan dan Perbankan'
-            ],
-            'FSTI' => [
-                'S1 Sistem dan Teknologi Informasi (STI)',
-                'S1 Rekayasa Perangkat Lunak (RPL)'
-            ]
-        ];
+        // Ambil semua data konsentrasi
+        $data = KonsentrasiJurusan::with('kurikulum', 'verifier')->get();
 
-        if ($fakultas && $password) {
-            if (isset($dekanPasswords[$fakultas]) && $dekanPasswords[$fakultas] === $password) {
-                if (isset($fakultasProdi[$fakultas])) {
-                    $kurikulums = Kurikulum::whereIn('program_studi', $fakultasProdi[$fakultas])->pluck('id');
-                    $data = KonsentrasiJurusan::with('kurikulum', 'verifier')
-                        ->whereIn('kurikulum_id', $kurikulums)
-                        ->get();
-                }
-            } else {
-                $error = "Password Dekan salah.";
-            }
-        }
+        // Variabel fakultas tetap dikirim untuk mencegah error di Blade
+        $fakultas = null;
 
-        return view('admin.dekan.konsentrasi', compact('data', 'fakultas', 'error'));
+        return view('admin.dekan.konsentrasi_jurusan', compact('data', 'fakultas', 'error'));
     }
 
     public function showForWarek1()
@@ -173,13 +144,12 @@ class KonsentrasiJurusanController extends Controller
         $konsentrasi->update([
             'status_verifikasi' => $request->status_verifikasi,
             'alasan_verifikasi' => $request->status_verifikasi == 'ditolak'
-                                    ? $request->alasan_verifikasi
-                                    : null,
+                ? $request->alasan_verifikasi
+                : null,
             'verifikasi_by' => Auth::id(),
             'verifikasi_at' => now(),
         ]);
 
         return redirect()->back()->with('success', 'Status verifikasi berhasil diperbarui');
     }
-
 }
