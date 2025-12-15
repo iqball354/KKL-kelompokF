@@ -61,7 +61,7 @@
         <div class="d-flex align-items-center gap-2">
             <label class="mb-0">Status:</label>
             <select id="statusFilter" class="form-select" style="width: 150px;">
-                <option value="">Semua Status</option>
+                <option value="">Semua</option>
                 <option value="aktif">Aktif</option>
                 <option value="nonaktif">Nonaktif</option>
             </select>

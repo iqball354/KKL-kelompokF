@@ -49,7 +49,7 @@
             <label class="d-flex align-items-center gap-1 mb-0">
                 Status:
                 <select id="statusFilter" class="form-select d-inline-block w-auto">
-                    <option value="">Semua Status</option>
+                    <option value="">Semua</option>
                     <option value="disetujui">Disetujui</option>
                     <option value="menunggu">Menunggu</option>
                     <option value="ditolak">Ditolak</option>

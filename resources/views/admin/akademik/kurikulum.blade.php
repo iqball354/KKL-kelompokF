@@ -29,7 +29,7 @@
                 <label>
                     Status:
                     <select id="filterStatus" class="form-select d-inline-block w-auto">
-                        <option value="">Semua Status</option>
+                        <option value="">Semua</option>
                         <option value="aktif">Aktif</option>
                         <option value="nonaktif">Nonaktif</option>
                     </select>
