@@ -46,11 +46,11 @@
     <table class="my-table" id="keahlianTable">
         <thead>
             <tr>
-                <th>No</th>
+                <th style="width: 20px; text-align: center;">No</th>
                 <th>Nama Dosen</th>
                 <th>Bidang Keahlian</th>
                 <th>Jumlah Dokumen</th>
-                <th>Status Kaprodi</th>
+                <th>Status</th>
                 <th>Dokumen</th>
             </tr>
         </thead>
@@ -70,7 +70,7 @@
             $modalId = md5($item->nama_dosen);
             @endphp
             <tr>
-                <td></td>
+                <td style="text-align: center;">{{ $loop->iteration }}</td>
                 <td>{{ $item->nama_dosen }}</td>
                 <td>{{ $bidangGabunganStr }}</td>
                 <td>
@@ -82,10 +82,10 @@
                 </td>
                 <td>
                     <span class="badge
-                        @if ($item->status_kaprodi == 'disetujui') bg-success
-                        @elseif($item->status_kaprodi == 'ditolak') bg-danger
+                        @if ($item->status_akademik == 'disetujui') bg-success
+                        @elseif($item->status_akademik == 'ditolak') bg-danger
                         @else bg-secondary @endif">
-                        {{ ucfirst($item->status_kaprodi) ?? '-' }}
+                        {{ ucfirst($item->status_akademik) ?? '-' }}
                     </span>
                 </td>
                 <td>

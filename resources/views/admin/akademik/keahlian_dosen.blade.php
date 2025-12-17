@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="container mt-5">
-    <h2>Daftar Bidang Keahlian Dosen</h2>
+    <h2>Manajemen Bidang Keahlian Dosen</h2>
 
     <div class="d-flex justify-content-between mb-3">
         <!-- Show entries -->
@@ -45,16 +45,16 @@
     <table class="my-table" id="keahlianTable">
         <thead>
             <tr>
-                <th>No</th>
+                <th style="width: 20px; text-align: center;">No</th>
                 <th>Nama Dosen</th>
                 <th>Bidang Keahlian</th>
                 <th>Jumlah Dokumen</th>
-                <th>Status Kaprodi</th>
-                <th>Dokumen</th>
+                <th>Status</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($keahlianUnique as $index => $item)
+            @foreach($keahlianUnique as $item)
             @php
             $bidangGabunganStr = is_array($item->bidang_keahlian) ? implode(', ', $item->bidang_keahlian) : '-';
             $count_sertifikat = count($item->dokumen_sertifikat ?? []);
@@ -64,10 +64,9 @@
             $totalDocs = $count_sertifikat + $count_lainnya + $count_pendidikan + $count_link;
             $modalId = md5($item->nama_dosen);
             @endphp
-
             <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->nama_dosen }}</td>
+                <td style="text-align: center;">{{ $loop->iteration }}</td>
+                <td>{{ $item->nama_dosen ?? 'Nama tidak tersedia' }}</td>
                 <td>{{ $bidangGabunganStr }}</td>
                 <td>
                     Sertifikat: {{ $count_sertifikat }}<br>
@@ -77,12 +76,28 @@
                     <strong>Total: {{ $totalDocs }}</strong>
                 </td>
                 <td>
-                    <span class="badge
-                            @if($item->status_kaprodi=='disetujui') bg-success
-                            @elseif($item->status_kaprodi=='ditolak') bg-danger
-                            @else bg-secondary @endif">
-                        {{ ucfirst($item->status_kaprodi) ?? '-' }}
+                    <span class="badge 
+                        @if($item->status_akademik=='disetujui') bg-success
+                        @elseif($item->status_akademik=='ditolak') bg-danger
+                        @else bg-secondary @endif">
+                        {{ ucfirst($item->status_akademik) ?? '-' }}
                     </span>
+                    @if($item->status_akademik != 'disetujui')
+                    <form action="{{ route('akademik.keahlian.aksi', $item->id) }}" method="POST" class="d-block mt-2">
+                        @csrf
+                        <input type="hidden" name="aksi" value="setuju">
+                        <input type="hidden" name="nama_dosen" value="{{ $item->nama_dosen }}">
+                        <button class="btn btn-success btn-sm w-100">Setujui</button>
+                    </form>
+                    @endif
+                    @if($item->status_akademik != 'ditolak')
+                    <form action="{{ route('akademik.keahlian.aksi', $item->id) }}" method="POST" class="d-block mt-1">
+                        @csrf
+                        <input type="hidden" name="aksi" value="tolak">
+                        <input type="hidden" name="nama_dosen" value="{{ $item->nama_dosen }}">
+                        <button class="btn btn-danger btn-sm w-100">Tolak</button>
+                    </form>
+                    @endif
                 </td>
                 <td>
                     @if($totalDocs > 0)
@@ -99,7 +114,7 @@
     </table>
 </div>
 
-<!-- Modal Dokumen -->
+<!-- MODAL DOKUMEN -->
 @foreach($keahlianUnique as $item)
 @php
 $allDocs = [
@@ -119,40 +134,29 @@ $modalId = md5($item->nama_dosen);
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-
                 @foreach($allDocs as $type => $docs)
                 @if(count($docs))
                 <h6 class="mt-3">{{ $type }}</h6>
-
                 @foreach($docs as $i => $doc)
                 <div class="card mb-2 p-2">
-
                     @if($type == 'Link')
                     <a href="{{ $doc }}" target="_blank">{{ $doc }}</a>
                     @else
                     @php $ext = strtolower(pathinfo($doc, PATHINFO_EXTENSION)); @endphp
-
                     @if($ext == 'pdf')
                     <embed src="{{ asset('storage/'.$doc) }}" type="application/pdf" width="100%" height="400px">
-
                     @elseif(in_array($ext, ['doc','docx','xls','xlsx','ppt','pptx']))
-                    <iframe src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/'.$doc)) }}"
-                        width="100%" height="400px"></iframe>
-
+                    <iframe src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/'.$doc)) }}" width="100%" height="400px" frameborder="0"></iframe>
                     @else
                     <a href="{{ asset('storage/'.$doc) }}" target="_blank">{{ basename($doc) }}</a>
                     @endif
-
                     <div>Deskripsi: {{ $item->{'deskripsi_'.strtolower($type)}[$i] ?? '-' }}</div>
                     <div>Tahun: {{ $item->{'tahun_'.strtolower($type)}[$i] ?? '-' }}</div>
-
                     @endif
-
                 </div>
                 @endforeach
                 @endif
                 @endforeach
-
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -161,49 +165,31 @@ $modalId = md5($item->nama_dosen);
     </div>
 </div>
 @endforeach
+
 @endsection
 
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-
         let table = $('#keahlianTable').DataTable({
             "order": [
-                [1, "asc"]
+                [0, "asc"]
             ],
             "pageLength": 10,
-            "columnDefs": [{
-                "orderable": false,
-                "targets": 0
-            }],
-            "dom": 't<"d-flex justify-content-between mt-3"ip>',
-        });
-
-        // nomor urut otomatis sesuai search/pagination
-        table.on('draw.dt', function() {
-            let info = table.page.info();
-            table.column(0, {
-                page: 'current'
-            }).nodes().each(function(cell, i) {
-                cell.innerHTML = i + 1 + info.start;
-            });
+            "dom": 't<"d-flex justify-content-between mt-3"ip>', // sembunyikan search bawaan
         });
 
         const searchInput = document.getElementById('searchInput');
         const searchButton = document.getElementById('searchButton');
         const entriesSelect = document.getElementById('entriesSelect');
 
-        // Search pakai enter
         searchInput.addEventListener('keyup', function(e) {
             if (e.key === "Enter") table.search(this.value).draw();
         });
-
-        // Search tombol
         searchButton.addEventListener('click', function() {
             table.search(searchInput.value).draw();
         });
 
-        // Ganti jumlah entri
         entriesSelect.addEventListener('change', function() {
             table.page.len(this.value).draw();
         });

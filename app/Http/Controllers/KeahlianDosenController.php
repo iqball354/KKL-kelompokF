@@ -143,18 +143,18 @@ class KeahlianDosenController extends Controller
     }
 
     // ========================
-    // Method khusus Kaprodi
+    // Method khusus akademik
     // ========================
 
     // Tampilkan data keahlian untuk Kaprodi
-    public function showForKaprodi()
+    public function showakademik()
     {
         $keahlian = KeahlianDosen::all();
-        return view('admin.kaprodi.keahlian_dosen', compact('keahlian'));
+        return view('admin.akademik.keahlian_dosen', compact('keahlian'));
     }
 
     // Aksi setuju / tolak Kaprodi
-    public function aksiKaprodi(Request $request, $id)
+    public function aksiakademik(Request $request, $id)
     {
         $keahlian = KeahlianDosen::findOrFail($id);
 
@@ -163,11 +163,11 @@ class KeahlianDosenController extends Controller
             'nama_dosen' => 'required|string|max:255'
         ]);
 
-        $keahlian->status_kaprodi = $request->aksi === 'setuju' ? 'disetujui' : 'ditolak';
+        $keahlian->status_akademik = $request->aksi === 'setuju' ? 'disetujui' : 'ditolak';
         $keahlian->nama_dosen = $request->nama_dosen;
         $keahlian->save();
 
-        return back()->with('success', 'Aksi Kaprodi berhasil diproses');
+        return back()->with('success', 'Aksi Akademik berhasil diproses');
     }
 
     // Hapus data keahlian oleh Kaprodi
@@ -192,31 +192,16 @@ class KeahlianDosenController extends Controller
     public function lihatDokumen($id)
     {
         $keahlian = KeahlianDosen::findOrFail($id);
-        return view('admin.kaprodi.lihat_dokumen', compact('keahlian'));
+        return view('admin.akademik.lihat_dokumen', compact('keahlian'));
     }
-
-    // Kirim ke Akademik
-    public function kirimKeAkademik($id)
+    
+    
+    // Tampilkan data keahlian untuk kaprodi
+    public function showForKaprodi()
     {
-        $keahlian = KeahlianDosen::findOrFail($id);
-        $keahlian->status_akademik = 'dikirim';
-        $keahlian->save();
-
-        return back()->with('success', 'Data berhasil dikirim ke Akademik.');
+        $keahlian = KeahlianDosen::all();
+        return view('admin.kaprodi.keahlian_dosen', compact('keahlian'));
     }
-
-    // ========================
-    // Method khusus Akademik
-    // ========================
-    public function aksiAkademik($id)
-    {
-        $keahlian = KeahlianDosen::findOrFail($id);
-        $keahlian->status_akademik = 'diterima';
-        $keahlian->save();
-
-        return back()->with('success', 'Akademik menerima data');
-    }
-
     // Tampilkan data keahlian untuk Dekan
     public function showForDekan()
     {
@@ -236,13 +221,6 @@ class KeahlianDosenController extends Controller
     {
         $keahlian = KeahlianDosen::all();
         return view('admin.warek1.keahlian_dosen', compact('keahlian'));
-    }
-
-    // Tampilkan data keahlian untuk Akademik
-    public function showForAkademik()
-    {
-        $keahlian = KeahlianDosen::all();
-        return view('admin.akademik.keahlian_dosen', compact('keahlian'));
     }
 
     // Tampilkan data keahlian untuk Hrd

@@ -35,8 +35,8 @@ return new class extends Migration
             // Link Dokumen / Portofolio
             $table->json('link')->nullable();
 
-            // Status Kaprodi
-            $table->enum('status_kaprodi', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
+            // Status akademik
+            $table->enum('status_akademik', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
 
             $table->timestamps();
         });

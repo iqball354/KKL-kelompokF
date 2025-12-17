@@ -15,7 +15,7 @@
             <span>Dashboard</span>
         </a>
 
-        <a href="{{ route('akademik.keahlian.showForAkademik') }}" class="menu-item {{ request()->routeIs('akademik.keahlian.showForAkademik') ? 'active' : '' }}">
+        <a href="{{ route('akademik.keahlian.show') }}" class="menu-item {{ request()->routeIs('akademik.keahlian.*') ? 'active' : '' }}">
             <i class="fas fa-graduation-cap"></i>
             <span>Dosen</span>
         </a>
