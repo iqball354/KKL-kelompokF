@@ -71,7 +71,15 @@
                 </td>
                 <td>{{ $item->kode_konsentrasi }}</td>
                 <td>{{ $item->nama_konsentrasi }}</td>
-                <td>{{ $item->sub_konsentrasi ? implode(', ', $item->sub_konsentrasi) : '-' }}</td>
+                <td>
+                    @if(!empty($item->sub_konsentrasi))
+                    @foreach($item->sub_konsentrasi as $index => $sub)
+                    <div>{{ $index + 1 }}) {{ $sub }}</div>
+                    @endforeach
+                    @else
+                    -
+                    @endif
+                </td>
                 <td>
                     @php
                     $status = $item->status_verifikasi;
@@ -133,7 +141,7 @@
                 <p><strong>Kode:</strong> <span id="viewKode"></span></p>
                 <p><strong>Nama:</strong> <span id="viewNama"></span></p>
                 <p><strong>Sub Konsentrasi:</strong></p>
-                <ul id="viewSub"></ul>
+                <div id="viewSub"></div>
                 <p><strong>Deskripsi:</strong> <span id="viewDeskripsi"></span></p>
                 <p><strong>Alasan Verifikasi:</strong> <span id="viewAlasan"></span></p>
             </div>
@@ -252,19 +260,18 @@
             document.getElementById('viewDeskripsi').innerText = btn.dataset.deskripsi || '-';
             document.getElementById('viewAlasan').innerText = btn.dataset.alasan || '-';
 
-            const subList = document.getElementById('viewSub');
-            subList.innerHTML = '';
+            const container = document.getElementById('viewSub');
+            container.innerHTML = '';
+
             const subs = JSON.parse(btn.dataset.sub || '[]');
             if (subs.length) {
-                subs.forEach(s => {
-                    const li = document.createElement('li');
-                    li.innerText = s;
-                    subList.appendChild(li);
+                subs.forEach((s, index) => {
+                    const div = document.createElement('div');
+                    div.innerText = (index + 1) + ') ' + s;
+                    container.appendChild(div);
                 });
             } else {
-                const li = document.createElement('li');
-                li.innerText = '-';
-                subList.appendChild(li);
+                container.innerText = '-';
             }
 
             new bootstrap.Modal(document.getElementById('viewModal')).show();

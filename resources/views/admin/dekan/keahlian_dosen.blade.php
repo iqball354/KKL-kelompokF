@@ -51,7 +51,7 @@
                 <th>Bidang Keahlian</th>
                 <th>Jumlah Dokumen</th>
                 <th>Status</th>
-                <th>Dokumen</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
@@ -168,50 +168,29 @@ $modalId = md5($item->nama_dosen);
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-
         let table = $('#keahlianTable').DataTable({
-            "order": [
-                [1, "asc"]
-            ],
-            "pageLength": 10,
-            "dom": 't<"d-flex justify-content-between mt-3"ip>',
-            columnDefs: [{
-                    targets: 0,
-                    orderable: false
-                } // Kolom nomor urut
-            ]
+            ordering: false,
+            pageLength: 10,
+            dom: 't<"d-flex justify-content-between mt-3"ip>',
+            language: {
+                emptyTable: "Tidak ada data untuk ditampilkan",
+                zeroRecords: "Data tidak ditemukan"
+            }
         });
 
-        // NOMOR URUT OTOMATIS
-        table.on('order.dt search.dt draw.dt', function() {
-            let i = 1;
-            table.column(0, {
-                search: 'applied',
-                order: 'applied',
-                page: 'current'
-            }).nodes().each(function(cell) {
-                cell.innerHTML = i++;
-            });
-        }).draw();
-
-
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const entriesSelect = document.getElementById('entriesSelect');
-
-        // Search dengan tombol & enter
-        searchInput.addEventListener('keyup', function(e) {
-            if (e.key === "Enter") table.search(this.value).draw();
-        });
-        searchButton.addEventListener('click', function() {
-            table.search(searchInput.value).draw();
+        $('#searchButton').on('click', function() {
+            table.search($('#searchInput').val()).draw();
         });
 
-        // Ubah jumlah entries
-        entriesSelect.addEventListener('change', function() {
+        $('#searchInput').on('keyup', function(e) {
+            if (e.key === 'Enter') {
+                table.search(this.value).draw();
+            }
+        });
+
+        $('#entriesSelect').on('change', function() {
             table.page.len(this.value).draw();
         });
-
     });
 </script>
 @endsection

@@ -51,7 +51,7 @@
                 <th>Bidang Keahlian</th>
                 <th>Jumlah Dokumen</th>
                 <th>Status</th>
-                <th>Dokumen</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>

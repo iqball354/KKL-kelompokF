@@ -1,14 +1,20 @@
 @extends('admin.layout.akademik.main')
-@section('title', 'Bidang Keahlian Dosen')
+@section('title', 'Validasi Keahlian Dosen')
 
 @section('content')
 <div class="container mt-5">
-    <h2>Manajemen Bidang Keahlian Dosen</h2>
+    <h2>Validasi Keahlian Dosen</h2>
 
-    <div class="d-flex justify-content-between mb-3">
-        <!-- Show entries -->
-        <div>
-            <label>
+    @if(session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    <input type="hidden" id="isUnlockedFlag" value="1">
+
+    <!-- FILTER TABEL -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <div class="d-flex align-items-center gap-2">
+            <label class="d-flex align-items-center gap-1 mb-0">
                 Tampilkan
                 <select id="entriesSelect" class="form-select d-inline-block w-auto">
                     <option value="10" selected>10</option>
@@ -20,12 +26,23 @@
             </label>
         </div>
 
-        <!-- Search kanan -->
-        <div class="input-group" style="width: 280px;">
-            <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
-            <button class="btn btn-primary" id="searchButton">
-                <i class="fas fa-search"></i>
-            </button>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <label class="d-flex align-items-center gap-1 mb-0">
+                Status:
+                <select id="statusFilter" class="form-select d-inline-block w-auto">
+                    <option value="">Semua</option>
+                    <option value="disetujui">Disetujui</option>
+                    <option value="menunggu">Menunggu</option>
+                    <option value="ditolak">Ditolak</option>
+                </select>
+            </label>
+
+            <div class="input-group" style="width: 280px;">
+                <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
+                <button class="btn btn-primary" id="searchButton">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -35,14 +52,15 @@
     ->map(function ($group) {
     $first = $group->first();
     $first->bidang_keahlian = collect($group)->pluck('bidang_keahlian')->flatten()->unique()->toArray();
-    foreach(['dokumen_sertifikat','dokumen_lainnya','dokumen_pendidikan','link'] as $docType){
+    foreach (['dokumen_sertifikat', 'dokumen_lainnya', 'dokumen_pendidikan', 'link'] as $docType) {
     $first->$docType = collect($group)->pluck($docType)->flatten()->filter()->toArray();
     }
     return $first;
     });
     @endphp
 
-    <table class="my-table" id="keahlianTable">
+    <!-- TABEL -->
+    <table class="my-table table table-striped" id="keahlianTable">
         <thead>
             <tr>
                 <th style="width: 20px; text-align: center;">No</th>
@@ -54,7 +72,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($keahlianUnique as $item)
+            @foreach ($keahlianUnique as $item)
             @php
             $bidangGabunganStr = is_array($item->bidang_keahlian) ? implode(', ', $item->bidang_keahlian) : '-';
             $count_sertifikat = count($item->dokumen_sertifikat ?? []);
@@ -66,7 +84,7 @@
             @endphp
             <tr>
                 <td style="text-align: center;">{{ $loop->iteration }}</td>
-                <td>{{ $item->nama_dosen ?? 'Nama tidak tersedia' }}</td>
+                <td>{{ $item->nama_dosen }}</td>
                 <td>{{ $bidangGabunganStr }}</td>
                 <td>
                     Sertifikat: {{ $count_sertifikat }}<br>
@@ -75,37 +93,43 @@
                     Link: {{ $count_link }}<br>
                     <strong>Total: {{ $totalDocs }}</strong>
                 </td>
-                <td>
-                    <span class="badge 
-                        @if($item->status_akademik=='disetujui') bg-success
-                        @elseif($item->status_akademik=='ditolak') bg-danger
+                <td class="text-center">
+                    <span class="badge
+                        @if ($item->status_akademik == 'disetujui') bg-success
+                        @elseif($item->status_akademik == 'ditolak') bg-danger
                         @else bg-secondary @endif">
                         {{ ucfirst($item->status_akademik) ?? '-' }}
                     </span>
-                    @if($item->status_akademik != 'disetujui')
-                    <form action="{{ route('akademik.keahlian.aksi', $item->id) }}" method="POST" class="d-block mt-2">
-                        @csrf
-                        <input type="hidden" name="aksi" value="setuju">
-                        <input type="hidden" name="nama_dosen" value="{{ $item->nama_dosen }}">
-                        <button class="btn btn-success btn-sm w-100">Setujui</button>
-                    </form>
-                    @endif
-                    @if($item->status_akademik != 'ditolak')
-                    <form action="{{ route('akademik.keahlian.aksi', $item->id) }}" method="POST" class="d-block mt-1">
-                        @csrf
-                        <input type="hidden" name="aksi" value="tolak">
-                        <input type="hidden" name="nama_dosen" value="{{ $item->nama_dosen }}">
-                        <button class="btn btn-danger btn-sm w-100">Tolak</button>
-                    </form>
-                    @endif
                 </td>
-                <td>
-                    @if($totalDocs > 0)
-                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#docModal-{{ $modalId }}">
+                <td class="text-center">
+                    <!-- VIEW Dokumen -->
+                    @if ($totalDocs > 0)
+                    <button class="btn btn-info btn-sm" data-bs-toggle="modal"
+                        data-bs-target="#docModal-{{ $modalId }}">
                         <i class="fas fa-file-alt"></i>
                     </button>
                     @else
                     <span class="text-muted">Tidak ada dokumen</span>
+                    @endif
+
+                    <!-- APPROVE -->
+                    @if($item->status_akademik != 'disetujui')
+                    <button class="btn btn-success btn-sm approveBtn"
+                        data-id="{{ $item->id }}"
+                        data-nama="{{ $item->nama_dosen }}"
+                        data-alasan="{{ $item->alasan_validasi ?? '' }}">
+                        <i class="fas fa-check"></i>
+                    </button>
+                    @endif
+
+                    <!-- REJECT -->
+                    @if($item->status_akademik != 'ditolak')
+                    <button class="btn btn-danger btn-sm rejectBtn"
+                        data-id="{{ $item->id }}"
+                        data-nama="{{ $item->nama_dosen }}"
+                        data-alasan="{{ $item->alasan_validasi ?? '' }}">
+                        <i class="fas fa-times"></i>
+                    </button>
                     @endif
                 </td>
             </tr>
@@ -114,8 +138,8 @@
     </table>
 </div>
 
-<!-- MODAL DOKUMEN -->
-@foreach($keahlianUnique as $item)
+<!-- Modal Dokumen -->
+@foreach ($keahlianUnique as $item)
 @php
 $allDocs = [
 'Sertifikat' => $item->dokumen_sertifikat ?? [],
@@ -134,24 +158,26 @@ $modalId = md5($item->nama_dosen);
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                @foreach($allDocs as $type => $docs)
-                @if(count($docs))
+                @foreach ($allDocs as $type => $docs)
+                @if (count($docs))
                 <h6 class="mt-3">{{ $type }}</h6>
-                @foreach($docs as $i => $doc)
+                @foreach ($docs as $i => $doc)
                 <div class="card mb-2 p-2">
-                    @if($type == 'Link')
+                    @if ($type == 'Link')
                     <a href="{{ $doc }}" target="_blank">{{ $doc }}</a>
                     @else
                     @php $ext = strtolower(pathinfo($doc, PATHINFO_EXTENSION)); @endphp
-                    @if($ext == 'pdf')
-                    <embed src="{{ asset('storage/'.$doc) }}" type="application/pdf" width="100%" height="400px">
-                    @elseif(in_array($ext, ['doc','docx','xls','xlsx','ppt','pptx']))
-                    <iframe src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/'.$doc)) }}" width="100%" height="400px" frameborder="0"></iframe>
+
+                    @if ($ext == 'pdf')
+                    <embed src="{{ asset('storage/' . $doc) }}" type="application/pdf" width="100%" height="400px">
+                    @elseif(in_array($ext, ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx']))
+                    <iframe src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/' . $doc)) }}" width="100%" height="400px"></iframe>
                     @else
-                    <a href="{{ asset('storage/'.$doc) }}" target="_blank">{{ basename($doc) }}</a>
+                    <a href="{{ asset('storage/' . $doc) }}" target="_blank">{{ basename($doc) }}</a>
                     @endif
-                    <div>Deskripsi: {{ $item->{'deskripsi_'.strtolower($type)}[$i] ?? '-' }}</div>
-                    <div>Tahun: {{ $item->{'tahun_'.strtolower($type)}[$i] ?? '-' }}</div>
+
+                    <div>Deskripsi: {{ $item->{'deskripsi_' . strtolower($type)}[$i] ?? '-' }}</div>
+                    <div>Tahun: {{ $item->{'tahun_' . strtolower($type)}[$i] ?? '-' }}</div>
                     @endif
                 </div>
                 @endforeach
@@ -166,32 +192,130 @@ $modalId = md5($item->nama_dosen);
 </div>
 @endforeach
 
+<!-- Modal APPROVE dan REJECT -->
+<div class="modal fade" id="approveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" id="approveForm">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title">Setujui Keahlian</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah yakin menyetujui keahlian <strong id="approveNama"></strong>?</p>
+                    <div class="mb-3">
+                        <label>Alasan (opsional)</label>
+                        <textarea name="alasan_validasi" id="approveAlasan" class="form-control" rows="2"></textarea>
+                    </div>
+                    <input type="hidden" name="status_akademik" value="disetujui">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Setujui</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST" id="rejectForm">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title">Tolak Keahlian</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah yakin menolak keahlian <strong id="rejectNama"></strong>?</p>
+                    <div class="mb-3">
+                        <label>Alasan Penolakan</label>
+                        <textarea name="alasan_validasi" id="rejectAlasan" class="form-control" rows="2" required></textarea>
+                    </div>
+                    <input type="hidden" name="status_akademik" value="ditolak">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Tolak</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        let table = $('#keahlianTable').DataTable({
-            "order": [
-                [0, "asc"]
+        const table = $('#keahlianTable').DataTable({
+            order: [
+                [1, 'asc']
             ],
-            "pageLength": 10,
-            "dom": 't<"d-flex justify-content-between mt-3"ip>', // sembunyikan search bawaan
+            pageLength: 10,
+            dom: 't<"d-flex justify-content-between mt-3"ip>',
+            columnDefs: [{
+                    targets: 0,
+                    orderable: false
+                },
+                {
+                    targets: 2,
+                    orderable: false
+                },
+                {
+                    targets: 3,
+                    orderable: false
+                },
+                {
+                    targets: 5,
+                    orderable: false
+                }
+            ]
         });
 
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
-        const entriesSelect = document.getElementById('entriesSelect');
+        table.on('order.dt search.dt draw.dt', function() {
+            let i = 1;
+            table.column(0, {
+                    search: 'applied',
+                    order: 'applied',
+                    page: 'current'
+                })
+                .nodes()
+                .each(cell => cell.innerHTML = i++);
+        }).draw();
 
-        searchInput.addEventListener('keyup', function(e) {
-            if (e.key === "Enter") table.search(this.value).draw();
-        });
-        searchButton.addEventListener('click', function() {
-            table.search(searchInput.value).draw();
-        });
-
-        entriesSelect.addEventListener('change', function() {
+        $('#entriesSelect').on('change', function() {
             table.page.len(this.value).draw();
+        });
+        $('#statusFilter').on('change', function() {
+            table.column(4).search(this.value.toLowerCase()).draw();
+        });
+        $('#searchButton').on('click', () => table.search($('#searchInput').val()).draw());
+        $('#searchInput').on('keyup', e => {
+            if (e.key === 'Enter') table.search(e.target.value).draw();
+        });
+
+        // VIEW modal
+        document.querySelectorAll('.approveBtn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('approveForm').action = `/akademik/keahlian-dosen/${this.dataset.id}/validasi`;
+                document.getElementById('approveNama').innerText = this.dataset.nama;
+                document.getElementById('approveAlasan').value = this.dataset.alasan || '';
+                new bootstrap.Modal(document.getElementById('approveModal')).show();
+            });
+        });
+
+        document.querySelectorAll('.rejectBtn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('rejectForm').action = `/akademik/keahlian-dosen/${this.dataset.id}/validasi`;
+                document.getElementById('rejectNama').innerText = this.dataset.nama;
+                document.getElementById('rejectAlasan').value = this.dataset.alasan || '';
+                new bootstrap.Modal(document.getElementById('rejectModal')).show();
+            });
         });
     });
 </script>

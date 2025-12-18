@@ -36,7 +36,7 @@
     @php $isUnlocked = isset($kurikulums) && $kurikulums->count() > 0; @endphp
     <input type="hidden" id="isUnlockedFlag" value="{{ $isUnlocked ? 1 : 0 }}">
 
-    <!-- FILTER TABEL: Tampilkan entri (kiri) + Status & Cari (kanan) -->
+    <!-- FILTER TABEL -->
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <div class="d-flex align-items-center gap-2">
             <label class="d-flex align-items-center gap-1 mb-0">
@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <!-- BUTTON TAMBAH KONSENTRASI (DI BAWAH FILTER) -->
+    <!-- BUTTON TAMBAH -->
     <div class="mb-3">
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal" @if(!$isUnlocked) disabled @endif>
             + Tambah Konsentrasi
@@ -94,6 +94,12 @@
         <tbody>
             @if($isUnlocked)
             @foreach ($data as $item)
+            @php
+            // Perbaikan json_decode agar aman jika sudah array
+            $subs = is_array($item->sub_konsentrasi)
+            ? $item->sub_konsentrasi
+            : (is_string($item->sub_konsentrasi) ? json_decode($item->sub_konsentrasi, true) : []);
+            @endphp
             <tr>
                 <td></td>
                 <td>
@@ -102,25 +108,31 @@
                 </td>
                 <td>{{ $item->kode_konsentrasi }}</td>
                 <td>{{ $item->nama_konsentrasi }}</td>
-                <td>{{ !empty($item->sub_konsentrasi) ? implode(', ', $item->sub_konsentrasi) : '-' }}</td>
-
                 <td>
-                    <span class="badge 
-                        {{ $item->status_verifikasi == 'disetujui' ? 'bg-success' : 
-                           ($item->status_verifikasi == 'ditolak' ? 'bg-danger' : 'bg-secondary') }}">
+                    @if(count($subs))
+                    <ol class="mb-0 ps-3">
+                        @foreach($subs as $sub)
+                        <li>{{ $sub }}</li>
+                        @endforeach
+                    </ol>
+                    @else
+                    -
+                    @endif
+                </td>
+                <td>
+                    <span class="badge {{ $item->status_verifikasi == 'disetujui' ? 'bg-success' : ($item->status_verifikasi == 'ditolak' ? 'bg-danger' : 'bg-secondary') }}">
                         {{ ucfirst($item->status_verifikasi) }}
                     </span>
                 </td>
-
                 <td>
                     <button class="btn btn-info btn-sm viewBtn"
                         data-nama="{{ $item->nama_konsentrasi }}"
                         data-kode="{{ $item->kode_konsentrasi }}"
                         data-kurikulum="{{ $item->kurikulum?->kurikulum }} ({{ $item->kurikulum?->program_studi }})"
-                        data-sub="{{ json_encode($item->sub_konsentrasi ?? []) }}"
+                        data-sub="{{ json_encode($subs) }}"
                         data-deskripsi="{{ $item->deskripsi ?? '' }}"
                         data-status="{{ $item->status_verifikasi }}"
-                        data-alasan="{{ $item->alasan_verifikasi }}"
+                        data-alasan="{{ $item->alasan_verifikasi ?? '' }}"
                         data-waktu="{{ $item->verifikasi_at ?? '' }}">
                         <i class="fas fa-eye"></i>
                     </button>
@@ -130,16 +142,16 @@
                         data-kurikulum="{{ $item->kurikulum?->id ?? '' }}"
                         data-kode="{{ $item->kode_konsentrasi }}"
                         data-nama="{{ $item->nama_konsentrasi }}"
-                        data-sub="{{ json_encode($item->sub_konsentrasi ?? []) }}"
+                        data-sub="{{ json_encode($subs) }}"
                         data-deskripsi="{{ $item->deskripsi ?? '' }}">
                         <i class="fas fa-pencil-alt"></i>
                     </button>
 
-                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#deleteModal-{{ md5($item->id) }}">
+                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ md5($item->id) }}">
                         <i class="fas fa-trash"></i>
                     </button>
 
+                    <!-- MODAL DELETE -->
                     <div class="modal fade" id="deleteModal-{{ md5($item->id) }}" tabindex="-1">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
@@ -148,8 +160,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    Apakah Anda yakin ingin menghapus konsentrasi
-                                    <strong>{{ $item->nama_konsentrasi }}</strong>?
+                                    Apakah Anda yakin ingin menghapus konsentrasi <strong>{{ $item->nama_konsentrasi }}</strong>?
                                 </div>
                                 <div class="modal-footer">
                                     <form action="{{ route('kaprodi.konsentrasi.destroy', $item->id) }}" method="POST">
@@ -193,9 +204,7 @@
                         <select name="kurikulum_id" class="form-select" required>
                             <option value="">Pilih Kurikulum</option>
                             @foreach($kurikulums as $kurikulum)
-                            <option value="{{ $kurikulum->id }}">
-                                {{ $kurikulum->kurikulum }} ({{ $kurikulum->program_studi }})
-                            </option>
+                            <option value="{{ $kurikulum->id }}">{{ $kurikulum->kurikulum }} ({{ $kurikulum->program_studi }})</option>
                             @endforeach
                         </select>
                     </div>
@@ -257,9 +266,7 @@
                         <select name="kurikulum_id" id="editKurikulum" class="form-select" required>
                             <option value="">Pilih Kurikulum</option>
                             @foreach($kurikulums as $kurikulum)
-                            <option value="{{ $kurikulum->id }}">
-                                {{ $kurikulum->kurikulum }} ({{ $kurikulum->program_studi }})
-                            </option>
+                            <option value="{{ $kurikulum->id }}">{{ $kurikulum->kurikulum }} ({{ $kurikulum->program_studi }})</option>
                             @endforeach
                         </select>
                     </div>
@@ -305,7 +312,7 @@
                 <p><strong>Kode:</strong> <span id="viewKode"></span></p>
                 <p><strong>Nama:</strong> <span id="viewNama"></span></p>
                 <p><strong>Sub Konsentrasi:</strong></p>
-                <ul id="viewSub"></ul>
+                <div id="viewSub"></div>
                 <p><strong>Deskripsi:</strong> <span id="viewDeskripsi"></span></p>
                 <p><strong>Status Verifikasi:</strong> <span id="viewStatus"></span></p>
                 <p><strong>Alasan Verifikasi:</strong> <span id="viewAlasan"></span></p>
@@ -323,11 +330,11 @@
         if (!isUnlocked) return;
 
         const table = $('#konsentrasiTable').DataTable({
-            "order": [
-                [1, "asc"]
+            order: [
+                [1, 'asc']
             ],
-            "pageLength": 10,
-            "dom": 't<"d-flex justify-content-between mt-3"ip>',
+            pageLength: 10,
+            dom: 't<"d-flex justify-content-between mt-3"ip>',
             columnDefs: [{
                     targets: 0,
                     orderable: false
@@ -342,11 +349,8 @@
         table.on('order.dt search.dt draw.dt', function() {
             let i = 1;
             table.column(0, {
-                    search: 'applied',
-                    order: 'applied',
-                    page: 'current'
-                })
-                .nodes().each(cell => cell.innerHTML = i++);
+                page: 'current'
+            }).nodes().each(cell => cell.innerHTML = i++);
         }).draw();
 
         document.getElementById('entriesSelect').addEventListener('change', function() {
@@ -376,6 +380,7 @@
         `);
         });
 
+        // Hapus Sub
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('removeSub')) e.target.closest('.input-group').remove();
         });
@@ -407,7 +412,6 @@
                 `);
                 });
 
-                document.getElementById('editForm').action = `/kaprodi/konsentrasi/${id}/update`;
                 new bootstrap.Modal(document.getElementById('editModal')).show();
             });
         });
@@ -433,18 +437,18 @@
                 document.getElementById('viewAlasan').innerText = this.dataset.alasan;
                 document.getElementById('viewWaktu').innerText = this.dataset.waktu;
 
-                let subUl = document.getElementById('viewSub');
-                subUl.innerHTML = '';
-                JSON.parse(this.dataset.sub).forEach(sub => {
-                    let li = document.createElement('li');
-                    li.textContent = sub;
-                    subUl.appendChild(li);
+                const container = document.getElementById('viewSub');
+                container.innerHTML = '';
+                const subs = JSON.parse(this.dataset.sub || '[]');
+                subs.forEach((sub, i) => {
+                    const div = document.createElement('div');
+                    div.innerText = (i + 1) + ') ' + sub;
+                    container.appendChild(div);
                 });
 
                 new bootstrap.Modal(document.getElementById('viewModal')).show();
             });
         });
-
     });
 </script>
 @endsection

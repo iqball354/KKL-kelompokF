@@ -92,7 +92,7 @@ Route::middleware(['auth'])->group(function () {
    Route::get('/akademik/dashboard', [DashboardController::class, 'akademik'])->name('akademik.dashboard');
    /* Keahlian Dosen */
    Route::get('/akademik/keahlian-dosen', [KeahlianDosenController::class, 'showakademik'])->name('akademik.keahlian.show');
-   Route::post('/akademik/keahlian-dosen/{id}/aksi', [KeahlianDosenController::class, 'aksiakademik'])->name('akademik.keahlian.aksi');
+   Route::put('/akademik/keahlian-dosen/{id}/validasi', [KeahlianDosenController::class, 'validasiAkademik'])->name('keahlian.validasi');
    /* Kurikulum */
    Route::get('/akademik/kurikulum', [KurikulumController::class, 'index'])->name('akademik.kurikulum.index');
    Route::post('/akademik/kurikulum/store', [KurikulumController::class, 'store'])->name('akademik.kurikulum.store');

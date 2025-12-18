@@ -35,10 +35,19 @@ return new class extends Migration
             // Link Dokumen / Portofolio
             $table->json('link')->nullable();
 
-            // Status akademik
+            // Status akademik / validasi
             $table->enum('status_akademik', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
+            $table->unsignedBigInteger('validasi_by')->nullable()->index();
+            $table->text('alasan_validasi')->nullable();
+            $table->timestamp('validasi_at')->nullable();
 
             $table->timestamps();
+
+            // Foreign key
+            $table->foreign('validasi_by')
+                ->references('id')
+                ->on('users')
+                ->onDelete('set null');
         });
     }
 

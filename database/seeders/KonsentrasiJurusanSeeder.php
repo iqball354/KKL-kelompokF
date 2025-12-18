@@ -12,73 +12,61 @@ class KonsentrasiJurusanSeeder extends Seeder
     {
         KonsentrasiJurusan::query()->delete();
 
-        // Ambil semua kurikulum yang ada, keyBy program_studi agar gampang dipanggil
-        $allKurikulums = Kurikulum::all()->keyBy('program_studi');
+        $kurikulum = Kurikulum::all()->keyBy('id_kurikulum');
 
-        $konsentrasis = [
-            // FEB
+        $data = [
             [
-                'kurikulum_id' => $allKurikulums['S2 Magister Manajemen']->id ?? null,
-                'kode_konsentrasi' => 'MM2323-1',
+                'kurikulum_id' => $kurikulum['S2MM']->id,
+                'kode_konsentrasi' => 'MS1,MS2,MS3',
                 'nama_konsentrasi' => 'Manajemen Strategis',
-                'sub_konsentrasi' => json_encode(['Leadership', 'Decision Making', 'HR', 'Finance', 'Marketing']),
-                'deskripsi' => 'Tujuan: Mengembangkan kemampuan manajerial. Berlaku sampai 2025.',
-                'status_verifikasi' => 'menunggu',
+                'sub_konsentrasi' => json_encode(['Strategi', 'Kepemimpinan', 'Perubahan']),
+                'deskripsi' => 'Tujuan ini untuk penguatan strategi dan kepemimpinan organisasi. Berlaku sampai 2026.',
+                'status_verifikasi' => 'disetujui',
             ],
             [
-                'kurikulum_id' => $allKurikulums['S1 Manajemen']->id ?? null,
-                'kode_konsentrasi' => 'M12323-1',
-                'nama_konsentrasi' => 'Manajemen Operasional',
-                'sub_konsentrasi' => json_encode(['Produksi', 'Supply Chain', 'Quality', 'Logistics', 'Planning']),
-                'deskripsi' => 'Tujuan: Fokus pada operasi bisnis efektif. Berlaku sampai 2025.',
-                'status_verifikasi' => 'menunggu',
+                'kurikulum_id' => $kurikulum['S1M']->id,
+                'kode_konsentrasi' => 'MB1,MB2,MB3',
+                'nama_konsentrasi' => 'Manajemen Bisnis',
+                'sub_konsentrasi' => json_encode(['Pemasaran', 'Keuangan', 'SDM']),
+                'deskripsi' => 'Tujuan ini untuk pengembangan kompetensi bisnis terpadu. Berlaku sampai 2026.',
+                'status_verifikasi' => 'disetujui',
             ],
             [
-                'kurikulum_id' => $allKurikulums['S1 Akuntansi']->id ?? null,
-                'kode_konsentrasi' => 'AK2323-1',
-                'nama_konsentrasi' => 'Akuntansi Keuangan',
-                'sub_konsentrasi' => json_encode(['Audit', 'Laporan Keuangan', 'Pajak', 'Cost Accounting', 'Internal Control']),
-                'deskripsi' => 'Tujuan: Pelaporan keuangan dan kepatuhan. Berlaku sampai 2025.',
-                'status_verifikasi' => 'menunggu',
+                'kurikulum_id' => $kurikulum['S1AK']->id,
+                'kode_konsentrasi' => 'AP1,AP2,AP3',
+                'nama_konsentrasi' => 'Akuntansi dan Pelaporan',
+                'sub_konsentrasi' => json_encode(['Pelaporan', 'Sistem', 'Analisis']),
+                'deskripsi' => 'Tujuan ini untuk penguatan akuntansi dan pelaporan keuangan. Berlaku sampai 2026.',
+                'status_verifikasi' => 'disetujui',
             ],
             [
-                'kurikulum_id' => $allKurikulums['S1 Ekonomi Pembangunan']->id ?? null,
-                'kode_konsentrasi' => 'EP2323-1',
-                'nama_konsentrasi' => 'Ekonomi Regional',
-                'sub_konsentrasi' => json_encode(['Pembangunan', 'Ekonomi Mikro', 'Ekonomi Makro', 'Analisis Data', 'Kebijakan Publik']),
-                'deskripsi' => 'Tujuan: Analisis ekonomi pembangunan daerah. Berlaku sampai 2025.',
-                'status_verifikasi' => 'menunggu',
+                'kurikulum_id' => $kurikulum['S1EP']->id,
+                'kode_konsentrasi' => 'ED1,ED2,ED3',
+                'nama_konsentrasi' => 'Economic Development',
+                'sub_konsentrasi' => json_encode(['Regional', 'Publik', 'Perencanaan']),
+                'deskripsi' => 'Tujuan ini untuk analisis dan perencanaan pembangunan ekonomi. Berlaku sampai 2026.',
+                'status_verifikasi' => 'disetujui',
             ],
             [
-                'kurikulum_id' => $allKurikulums['D3 Keuangan dan Perbankan']->id ?? null,
-                'kode_konsentrasi' => 'KB2323-1',
-                'nama_konsentrasi' => 'Keuangan Perbankan',
-                'sub_konsentrasi' => json_encode(['Manajemen Risiko', 'Kredit', 'Investasi', 'Analisis Keuangan', 'Produk Bank']),
-                'deskripsi' => 'Tujuan: Kompetensi keuangan dan perbankan. Berlaku sampai 2025.',
-                'status_verifikasi' => 'menunggu',
-            ],
-
-            // FSTI
-            [
-                'kurikulum_id' => $allKurikulums['S1 Sistem dan Teknologi Informasi']->id ?? null,
-                'kode_konsentrasi' => 'STI2323-1',
-                'nama_konsentrasi' => 'Web & IoT',
-                'sub_konsentrasi' => json_encode(['Frontend', 'Backend', 'Database', 'IoT Devices', 'Cloud Integration']),
-                'deskripsi' => 'Tujuan: Pengembangan aplikasi web & IoT. Berlaku sampai 2025.',
-                'status_verifikasi' => 'menunggu',
+                'kurikulum_id' => $kurikulum['D3KB']->id,
+                'kode_konsentrasi' => 'JKB1,JKB2,JKB3',
+                'nama_konsentrasi' => 'Jasa Keuangan Bank',
+                'sub_konsentrasi' => json_encode(['Operasional', 'Layanan', 'Kredit']),
+                'deskripsi' => 'Tujuan ini untuk peningkatan kompetensi jasa keuangan dan perbankan. Berlaku sampai 2026.',
+                'status_verifikasi' => 'disetujui',
             ],
             [
-                'kurikulum_id' => $allKurikulums['S1 Rekayasa Perangkat Lunak']->id ?? null,
-                'kode_konsentrasi' => 'RPL2323-1',
-                'nama_konsentrasi' => 'Software Engineering',
-                'sub_konsentrasi' => json_encode(['Design Patterns', 'Testing', 'DevOps', 'Agile', 'API Development']),
-                'deskripsi' => 'Tujuan: Meningkatkan kompetensi rekayasa perangkat lunak. Berlaku sampai 2025.',
+                'kurikulum_id' => $kurikulum['S1STI']->id,
+                'kode_konsentrasi' => 'IOT1,IOT2,IOT3',
+                'nama_konsentrasi' => 'Internet of Things',
+                'sub_konsentrasi' => json_encode(['Embedded', 'Networking', 'Smart System']),
+                'deskripsi' => 'Tujuan ini untuk pengembangan sistem IoT terintegrasi. Berlaku sampai 2026.',
                 'status_verifikasi' => 'menunggu',
             ],
         ];
 
-        foreach ($konsentrasis as $k) {
-            KonsentrasiJurusan::create($k);
+        foreach ($data as $item) {
+            KonsentrasiJurusan::create($item);
         }
     }
 }

@@ -12,10 +12,10 @@
     @php $isUnlocked = true; @endphp
     <input type="hidden" id="isUnlockedFlag" value="1">
 
-    <!-- FILTER TABEL -->
+    <!-- FILTER -->
     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <div class="d-flex align-items-center gap-2">
-            <label class="d-flex align-items-center gap-1 mb-0">
+            <label class="mb-0">
                 Tampilkan
                 <select id="entriesSelect" class="form-select d-inline-block w-auto">
                     <option value="10" selected>10</option>
@@ -27,27 +27,22 @@
             </label>
         </div>
 
-        <div class="d-flex align-items-center gap-2 flex-wrap">
-            <label class="d-flex align-items-center gap-1 mb-0">
-                Status:
-                <select id="statusFilter" class="form-select d-inline-block w-auto">
-                    <option value="">Semua</option>
-                    <option value="disetujui">Disetujui</option>
-                    <option value="menunggu">Menunggu</option>
-                    <option value="ditolak">Ditolak</option>
-                </select>
-            </label>
+        <div class="d-flex align-items-center gap-2">
+            <select id="statusFilter" class="form-select w-auto">
+                <option value="">Semua</option>
+                <option value="disetujui">Disetujui</option>
+                <option value="menunggu">Menunggu</option>
+                <option value="ditolak">Ditolak</option>
+            </select>
 
-            <div class="input-group" style="width: 280px;">
-                <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
-                <button class="btn btn-primary" id="searchButton">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
+            <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
+            <button class="btn btn-primary" id="searchButton">
+                <i class="fas fa-search"></i>
+            </button>
         </div>
     </div>
 
-    <!-- TABEL -->
+    <!-- TABEL (TIDAK DIUBAH STRUKTURNYA) -->
     <table class="my-table table table-striped" id="konsentrasiTable">
         <thead>
             <tr>
@@ -61,30 +56,45 @@
             </tr>
         </thead>
         <tbody>
-            @if($isUnlocked)
             @foreach($data as $item)
             <tr>
                 <td></td>
-                <td><strong>{{ $item->kurikulum->kurikulum ?? '-' }}</strong><br>
+                <td>
+                    <strong>{{ $item->kurikulum->kurikulum ?? '-' }}</strong><br>
                     Prodi: {{ $item->kurikulum->program_studi ?? '-' }}
                 </td>
                 <td>{{ $item->kode_konsentrasi }}</td>
                 <td>{{ $item->nama_konsentrasi }}</td>
-                <td>{{ $item->sub_konsentrasi ? implode(', ', $item->sub_konsentrasi) : '-' }}</td>
+
+                <!-- SUB KONSENTRASI (DIPERBARUI) -->
+                <td>
+                    @if(!empty($item->sub_konsentrasi))
+                    @foreach($item->sub_konsentrasi as $i => $sub)
+                    <div>{{ $i + 1 }}) {{ $sub }}</div>
+                    @endforeach
+                    @else
+                    -
+                    @endif
+                </td>
+
                 <td>
                     @php
                     $status = $item->status_verifikasi;
-                    $badgeClass = $status === 'disetujui' ? 'bg-success' : ($status === 'ditolak' ? 'bg-danger' : 'bg-secondary');
-                    $statusLabel = $status === 'disetujui' ? 'Disetujui' : ($status === 'ditolak' ? 'Ditolak' : ucfirst($status ?? 'Menunggu'));
+                    $badgeClass = $status === 'disetujui'
+                    ? 'bg-success'
+                    : ($status === 'ditolak' ? 'bg-danger' : 'bg-secondary');
+                    $statusLabel = $status === 'disetujui'
+                    ? 'Disetujui'
+                    : ($status === 'ditolak' ? 'Ditolak' : 'Menunggu');
                     @endphp
                     <span class="badge {{ $badgeClass }}">{{ $statusLabel }}</span>
                 </td>
+
                 <td>
-                    <!-- Tombol View -->
                     <button class="btn btn-info btn-sm viewBtn"
                         data-nama="{{ $item->nama_konsentrasi }}"
                         data-kode="{{ $item->kode_konsentrasi }}"
-                        data-kurikulum="{{ $item->kurikulum->kurikulum ?? '' }} ({{ $item->kurikulum->program_studi ?? '' }})"
+                        data-kurikulum="{{ $item->kurikulum->kurikulum ?? '-' }} ({{ $item->kurikulum->program_studi ?? '-' }})"
                         data-sub="{{ json_encode($item->sub_konsentrasi) }}"
                         data-deskripsi="{{ $item->deskripsi ?? '' }}">
                         <i class="fas fa-eye"></i>
@@ -92,11 +102,6 @@
                 </td>
             </tr>
             @endforeach
-            @else
-            <tr>
-                <td colspan="7" class="text-center">Masukkan program studi dan kunci untuk menampilkan data</td>
-            </tr>
-            @endif
         </tbody>
     </table>
 </div>
@@ -113,8 +118,10 @@
                 <p><strong>Kurikulum:</strong> <span id="viewKurikulum"></span></p>
                 <p><strong>Kode:</strong> <span id="viewKode"></span></p>
                 <p><strong>Nama:</strong> <span id="viewNama"></span></p>
+
                 <p><strong>Sub Konsentrasi:</strong></p>
-                <ul id="viewSub"></ul>
+                <div id="viewSub"></div>
+
                 <p><strong>Deskripsi:</strong> <span id="viewDeskripsi"></span></p>
             </div>
         </div>
@@ -125,8 +132,6 @@
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const isUnlocked = document.getElementById('isUnlockedFlag').value === '1';
-        if (!isUnlocked) return;
 
         const table = $('#konsentrasiTable').DataTable({
             order: [
@@ -148,19 +153,17 @@
         table.on('order.dt search.dt draw.dt', function() {
             let i = 1;
             table.column(0, {
-                    search: 'applied',
-                    order: 'applied',
                     page: 'current'
-                })
-                .nodes().each(cell => cell.innerHTML = i++);
+                }).nodes()
+                .each(cell => cell.innerHTML = i++);
         }).draw();
 
-        document.getElementById('entriesSelect').addEventListener('change', function() {
-            table.page.len(this.value).draw();
+        document.getElementById('entriesSelect').addEventListener('change', e => {
+            table.page.len(e.target.value).draw();
         });
 
-        document.getElementById('statusFilter').addEventListener('change', function() {
-            table.column(5).search(this.value.toLowerCase()).draw();
+        document.getElementById('statusFilter').addEventListener('change', e => {
+            table.column(5).search(e.target.value.toLowerCase()).draw();
         });
 
         document.getElementById('searchButton').addEventListener('click', () => {
@@ -171,7 +174,7 @@
             if (e.key === 'Enter') table.search(e.target.value).draw();
         });
 
-        // VIEW modal
+        // VIEW MODAL (TANPA TITIK)
         document.addEventListener('click', e => {
             const btn = e.target.closest('.viewBtn');
             if (!btn) return;
@@ -181,19 +184,18 @@
             document.getElementById('viewNama').innerText = btn.dataset.nama;
             document.getElementById('viewDeskripsi').innerText = btn.dataset.deskripsi || '-';
 
-            const subList = document.getElementById('viewSub');
-            subList.innerHTML = '';
+            const container = document.getElementById('viewSub');
+            container.innerHTML = '';
+
             const subs = JSON.parse(btn.dataset.sub || '[]');
             if (subs.length) {
-                subs.forEach(s => {
-                    const li = document.createElement('li');
-                    li.innerText = s;
-                    subList.appendChild(li);
+                subs.forEach((s, i) => {
+                    const div = document.createElement('div');
+                    div.innerText = (i + 1) + ') ' + s;
+                    container.appendChild(div);
                 });
             } else {
-                const li = document.createElement('li');
-                li.innerText = '-';
-                subList.appendChild(li);
+                container.innerText = '-';
             }
 
             new bootstrap.Modal(document.getElementById('viewModal')).show();

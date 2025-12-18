@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="container mt-5">
-    <h2>Daftar Bidang Keahlian Dosen</h2>
+    <h2>Validasih Bidang Keahlian Dosen</h2>
 
     <div class="d-flex justify-content-between mb-3">
         <!-- Show entries -->
@@ -50,7 +50,7 @@
                 <th>Bidang Keahlian</th>
                 <th>Jumlah Dokumen</th>
                 <th>Status</th>
-                <th>Dokumen</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>

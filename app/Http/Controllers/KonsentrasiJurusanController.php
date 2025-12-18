@@ -151,6 +151,21 @@ class KonsentrasiJurusanController extends Controller
     public function showForWarek1()
     {
         $data = KonsentrasiJurusan::with('kurikulum', 'verifier')->get();
+
+        // NORMALISASI sub_konsentrasi
+        $data->transform(function ($item) {
+            if (is_string($item->sub_konsentrasi)) {
+                $decoded = json_decode($item->sub_konsentrasi, true);
+                if (is_array($decoded)) {
+                    $item->sub_konsentrasi = $decoded;
+                } else {
+                    $item->sub_konsentrasi = array_filter(array_map('trim', explode(',', $item->sub_konsentrasi)));
+                }
+            }
+            if ($item->sub_konsentrasi === null) $item->sub_konsentrasi = [];
+            return $item;
+        });
+
         return view('admin.warek1.konsentrasi_jurusan', compact('data'));
     }
 
@@ -160,6 +175,29 @@ class KonsentrasiJurusanController extends Controller
     public function verifikasiIndex()
     {
         $data = KonsentrasiJurusan::with('kurikulum', 'verifier')->get();
+
+        // NORMALISASI sub_konsentrasi → pastikan array
+        $data->transform(function ($item) {
+            if (is_string($item->sub_konsentrasi)) {
+                $decoded = json_decode($item->sub_konsentrasi, true);
+
+                if (is_array($decoded)) {
+                    $item->sub_konsentrasi = $decoded;
+                } else {
+                    // fallback kalau string biasa, misal "AI, Data Science"
+                    $item->sub_konsentrasi = array_filter(
+                        array_map('trim', explode(',', $item->sub_konsentrasi))
+                    );
+                }
+            }
+
+            if ($item->sub_konsentrasi === null) {
+                $item->sub_konsentrasi = [];
+            }
+
+            return $item;
+        });
+
         return view('admin.akademik.konsentrasi_jurusan', compact('data'));
     }
 
