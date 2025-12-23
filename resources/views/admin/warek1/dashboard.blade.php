@@ -2,31 +2,72 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<h5>Statistik Sistem Akademik</h5>
-<div class="d-flex flex-wrap mt-3">
-    <div class="card m-2" style="width: 13rem; border-radius: 10px;">
-        <div class="card-body d-flex justify-content-between align-items-center">
-            <span>Total Dosen</span>
-            <i class="fas fa-user"></i>
+<h4>Selamat Datang di Halaman Dashboard Wakil Rektor I</h4>
+<p>Fitur Wakil Rektor I di sistem ini mencakup:</p>
+
+<div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+
+    <!-- Bidang Keahlian Dosen -->
+    <div class="col">
+        <div class="card h-100" style="background-color:#007bff; border-radius:10px; color:white;">
+            <div class="card-body">
+                <h5 class="card-title">Bidang Keahlian Dosen</h5>
+                <p class="card-text">
+                    Total dosen yang terdaftar di sistem akademik </p>
+            </div>
         </div>
     </div>
-    <div class="card m-2" style="width: 13rem; border-radius: 10px;">
-        <div class="card-body d-flex justify-content-between align-items-center">
-            <span>Kurikulum</span>
-            <i class="fas fa-users"></i>
+
+    <!-- Kurikulum -->
+    <div class="col">
+        <div class="card h-100" style="background-color:#ffc107; border-radius:10px; color:white;">
+            <div class="card-body">
+                <h5 class="card-title">Kurikulum</h5>
+                <p class="card-text">
+                    Melihat kurikulum aktif dan nonaktif pada setiap fakultas
+                    dan program studi
+                </p>
+            </div>
         </div>
     </div>
-    <div class="card m-2" style="width: 13rem; border-radius: 10px;">
-        <div class="card-body d-flex justify-content-between align-items-center">
-            <span>Mata Kuliah</span>
-            <i class="fas fa-book"></i>
+
+    <!-- Konsentrasi Jurusan -->
+    <div class="col">
+        <div class="card h-100" style="background-color:#28a745; border-radius:10px; color:white;">
+            <div class="card-body">
+                <h5 class="card-title">Konsentrasi Jurusan</h5>
+                <p class="card-text">
+                    Melihat konsentrasi jurusan beserta status yang ditetapkan
+                    oleh Akademik
+                </p>
+            </div>
         </div>
     </div>
-    <div class="card m-2" style="width: 13rem; border-radius: 10px;">
-        <div class="card-body d-flex justify-content-between align-items-center">
-            <span>Program Studi</span>
-            <i class="fas fa-graduation-cap"></i>
-        </div>
-    </div>
+
 </div>
+
+<h5 class="mt-4">Keterangan Fitur</h5>
+
+<h6>Bidang Keahlian Dosen</h6>
+<ol>
+    <li>Melihat daftar bidang keahlian dosen</li>
+    <li>Melihat detail bidang keahlian dosen</li>
+    <li>Melihat dokumen pendukung bidang keahlian dosen</li>
+    <li>Mencakup seluruh program studi pada setiap fakultas</li>
+</ol>
+
+<h6>Kurikulum</h6>
+<ol>
+    <li>Melihat daftar kurikulum</li>
+    <li>Melihat status kurikulum (aktif / nonaktif)</li>
+    <li>Melihat kurikulum berdasarkan fakultas dan program studi</li>
+</ol>
+
+<h6>Konsentrasi Jurusan</h6>
+<ol>
+    <li>Melihat daftar konsentrasi jurusan</li>
+    <li>Melihat detail konsentrasi jurusan</li>
+    <li>Melihat status konsentrasi jurusan dari Akademik</li>
+</ol>
+
 @endsection

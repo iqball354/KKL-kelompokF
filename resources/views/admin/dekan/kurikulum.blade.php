@@ -34,6 +34,9 @@
     <div class="alert alert-danger">{{ $error }}</div>
     @endif
 
+    @php $isUnlocked = isset($fakultas) && empty($error); @endphp
+    <input type="hidden" id="isUnlockedFlag" value="{{ $isUnlocked ? 1 : 0 }}">
+
     <!-- FILTER BAR -->
     <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
 
@@ -50,7 +53,7 @@
         </div>
 
         <!-- KANAN -->
-        <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
             <label class="mb-0">Status:</label>
             <select id="statusFilter" class="form-select" style="width: 130px;">
                 <option value="">Semua</option>
@@ -59,7 +62,7 @@
             </select>
 
             <div class="input-group" style="width: 280px;">
-                <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
+                <input type="text" id="searchInput" class="form-control" placeholder="Cari kata kunci...">
                 <button class="btn btn-primary" id="searchButton">
                     <i class="fas fa-search"></i>
                 </button>
@@ -80,6 +83,7 @@
             </tr>
         </thead>
         <tbody>
+            @if($isUnlocked)
             @foreach ($data as $item)
             @php $modalId = md5($item->id); @endphp
             <tr>
@@ -103,11 +107,19 @@
                 </td>
             </tr>
             @endforeach
+            @else
+            <tr>
+                <td colspan="6" class="text-center text-muted">
+                    Masukkan fakultas dan kunci untuk menampilkan data 
+                </td>
+            </tr>
+            @endif
         </tbody>
     </table>
 </div>
 
 <!-- Modal Dokumen -->
+@if($isUnlocked)
 @foreach ($data as $item)
 @php $modalId = md5($item->id); @endphp
 <div class="modal fade" id="docModal-{{ $modalId }}" tabindex="-1">
@@ -146,28 +158,22 @@
     </div>
 </div>
 @endforeach
+@endif
 
 @endsection
 
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('isUnlockedFlag').value !== '1') return;
 
         const table = $('#kurikulumTable').DataTable({
-            "order": [
-                [1, "asc"]
-            ],
-            "pageLength": 10,
-            "dom": 't<"d-flex justify-content-between mt-3"ip>',
-            columnDefs: [{
-                    targets: 0,
-                    orderable: false
-                },
-                {
-                    targets: [4, 5],
-                    orderable: false
-                }
-            ]
+            ordering: false,
+            pageLength: 10,
+            dom: 't<"d-flex justify-content-between mt-3"ip>',
+            language: {
+                emptyTable: "Tidak ada data untuk ditampilkan"
+            }
         });
 
         // Nomor urut otomatis
@@ -184,22 +190,25 @@
                 });
         }).draw();
 
+        // Search button
         document.getElementById('searchButton').addEventListener('click', () =>
             table.search(document.getElementById('searchInput').value).draw()
         );
 
+        // Enter key search
         document.getElementById('searchInput').addEventListener('keyup', (e) => {
             if (e.key === 'Enter') table.search(e.target.value).draw();
         });
 
+        // Status filter
         $('#statusFilter').on('change', function() {
             table.column(5).search($(this).val()).draw();
         });
 
+        // Entries select
         document.getElementById('entriesSelect').addEventListener('change', function() {
             table.page.len(this.value).draw();
         });
-
     });
 </script>
 @endsection

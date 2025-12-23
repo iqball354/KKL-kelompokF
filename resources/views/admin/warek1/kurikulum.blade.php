@@ -122,20 +122,12 @@
     document.addEventListener('DOMContentLoaded', function() {
 
         const table = $('#kurikulumTable').DataTable({
-            "order": [
-                [1, "desc"]
-            ],
-            "pageLength": 10,
-            "dom": 't<"d-flex justify-content-between mt-3"ip>',
-            columnDefs: [{
-                    targets: 0,
-                    orderable: false
-                }, // No tidak bisa sort
-                {
-                    targets: [4, 5],
-                    orderable: false
-                }
-            ]
+            ordering: false,
+            pageLength: 10,
+            dom: 't<"d-flex justify-content-between mt-3"ip>',
+            language: {
+                emptyTable: "Tidak ada data untuk ditampilkan"
+            }
         });
 
         // === NOMOR URUT OTOMATIS ===

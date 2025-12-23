@@ -1,5 +1,5 @@
 @extends('admin.layout.akademik.main')
-@section('title', 'Data Konsentrasi Jurusan')
+@section('title', 'Verifikasi Data Konsentrasi Jurusan')
 
 @section('content')
 <div class="container mt-5">
@@ -46,6 +46,13 @@
             </div>
         </div>
     </div>
+
+    @if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+    </div>
+    @endif
+
 
     <!-- TABEL -->
     <table class="my-table table table-striped" id="konsentrasiTable">
@@ -211,20 +218,12 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const table = $('#konsentrasiTable').DataTable({
-            order: [
-                [1, 'asc']
-            ],
+            ordering: false,
             pageLength: 10,
             dom: 't<"d-flex justify-content-between mt-3"ip>',
-            columnDefs: [{
-                    targets: 0,
-                    orderable: false
-                },
-                {
-                    targets: [4, 5, 6],
-                    orderable: false
-                }
-            ]
+            language: {
+                emptyTable: "Tidak ada data untuk ditampilkan"
+            }
         });
 
         table.on('order.dt search.dt draw.dt', function() {

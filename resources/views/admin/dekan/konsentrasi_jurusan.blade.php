@@ -160,20 +160,12 @@
         if (document.getElementById('isUnlockedFlag').value !== '1') return;
 
         const table = $('#konsentrasiTable').DataTable({
-            order: [
-                [1, 'asc']
-            ],
+            ordering: false,
             pageLength: 10,
             dom: 't<"d-flex justify-content-between mt-3"ip>',
-            columnDefs: [{
-                    targets: 0,
-                    orderable: false
-                },
-                {
-                    targets: [4, 5, 6],
-                    orderable: false
-                }
-            ]
+            language: {
+                emptyTable: "Tidak ada data untuk ditampilkan"
+            }
         });
 
         table.on('order.dt search.dt draw.dt', function() {

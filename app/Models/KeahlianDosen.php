@@ -24,6 +24,7 @@ class KeahlianDosen extends Model
         'deskripsi_pendidikan',
         'tahun_pendidikan',
         'link',
+        'deskripsi_link',
         'status_akademik',
         'validasi_by',
         'alasan_validasi',
@@ -42,6 +43,7 @@ class KeahlianDosen extends Model
         'deskripsi_pendidikan' => 'array',
         'tahun_pendidikan' => 'array',
         'link' => 'array',
+        'deskripsi_link' => 'array',
         'validasi_at' => 'datetime',
     ];
 

@@ -1,12 +1,23 @@
 @extends('admin.layout.dekan.main')
-@section('title', 'Bidang Keahlian Dosen')
+@section('title', 'Data Bidang Keahlian Dosen')
 
 @section('content')
 <div class="container mt-5">
     <h2>Daftar Bidang Keahlian Dosen</h2>
 
-    <div class="d-flex justify-content-between mb-3">
-        <!-- Show entries -->
+    {{-- ALERT --}}
+    @if(session('error'))
+    <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    {{-- FILTER --}}
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <div>
             <label>
                 Tampilkan
@@ -20,8 +31,7 @@
             </label>
         </div>
 
-        <!-- Search kanan -->
-        <div class="input-group" style="width: 280px;">
+        <div class="input-group" style="width:280px">
             <input type="text" id="searchInput" class="form-control" placeholder="Cari data...">
             <button class="btn btn-primary" id="searchButton">
                 <i class="fas fa-search"></i>
@@ -29,133 +39,147 @@
         </div>
     </div>
 
+    {{-- ================= DATA PROCESSING ================= --}}
     @php
     $keahlianUnique = collect($keahlian)
     ->groupBy('nama_dosen')
     ->map(function ($group) {
     $first = $group->first();
-    $first->bidang_keahlian = collect($group)->pluck('bidang_keahlian')->flatten()->unique()->toArray();
 
-    foreach (['dokumen_sertifikat', 'dokumen_lainnya', 'dokumen_pendidikan', 'link'] as $docType) {
-    $first->$docType = collect($group)->pluck($docType)->flatten()->filter()->toArray();
+    $first->bidang_keahlian = collect($group)
+    ->pluck('bidang_keahlian')
+    ->flatten()
+    ->unique()
+    ->toArray();
+
+    foreach (['dokumen_sertifikat','dokumen_lainnya','dokumen_pendidikan','link'] as $type) {
+    $first->$type = collect($group)->pluck($type)->flatten()->filter()->toArray();
+    $first->{'deskripsi_'.$type} = collect($group)->pluck('deskripsi_'.$type)->flatten()->toArray();
+    $first->{'tahun_'.$type} = collect($group)->pluck('tahun_'.$type)->flatten()->toArray();
     }
+
     return $first;
     });
     @endphp
 
-    <table class="my-table" id="keahlianTable">
+    {{-- ================= TABEL ================= --}}
+    <table class="my-table table table-striped" id="keahlianTable">
         <thead>
             <tr>
-                <th style="width: 20px; text-align: center;">No</th>
+                <th style="width:20px;text-align:center;">No</th>
                 <th>Nama Dosen</th>
                 <th>Bidang Keahlian</th>
-                <th>Jumlah Dokumen</th>
+                <th>Dokumen Pendukung</th>
                 <th>Status</th>
-                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($keahlianUnique as $item)
             @php
-            $bidangGabunganStr = is_array($item->bidang_keahlian)
-            ? implode(', ', $item->bidang_keahlian)
-            : '-';
+            $totalDocs =
+            count($item->dokumen_sertifikat ?? []) +
+            count($item->dokumen_lainnya ?? []) +
+            count($item->dokumen_pendidikan ?? []) +
+            count($item->link ?? []);
 
-            $count_sertifikat = count($item->dokumen_sertifikat ?? []);
-            $count_lainnya = count($item->dokumen_lainnya ?? []);
-            $count_pendidikan = count($item->dokumen_pendidikan ?? []);
-            $count_link = count($item->link ?? []);
+            $badgeClass = match(strtolower($item->status_akademik ?? '')) {
+            'disetujui' => 'bg-success',
+            'ditolak' => 'bg-danger',
+            default => 'bg-secondary',
+            };
 
-            $totalDocs = $count_sertifikat + $count_lainnya + $count_pendidikan + $count_link;
             $modalId = md5($item->nama_dosen);
             @endphp
+
             <tr>
-                <td style="text-align: center;">{{ $loop->iteration }}</td>
+                <td class="text-center">{{ $loop->iteration }}</td>
                 <td>{{ $item->nama_dosen }}</td>
-                <td>{{ $bidangGabunganStr }}</td>
-                <td>
-                    Sertifikat: {{ $count_sertifikat }}<br>
-                    Lainnya: {{ $count_lainnya }}<br>
-                    Pendidikan: {{ $count_pendidikan }}<br>
-                    Link: {{ $count_link }}<br>
-                    <strong>Total: {{ $totalDocs }}</strong>
-                </td>
-                <td>
-                    <span class="badge
-                        @if ($item->status_akademik == 'disetujui') bg-success
-                        @elseif($item->status_akademik == 'ditolak') bg-danger
-                        @else bg-secondary @endif">
-                        {{ ucfirst($item->status_akademik) ?? '-' }}
-                    </span>
-                </td>
-                <td>
-                    @if ($totalDocs > 0)
-                    <button class="btn btn-info btn-sm" data-bs-toggle="modal"
+                <td>{{ implode(', ', (array)$item->bidang_keahlian) }}</td>
+
+                <td class="text-center">
+                    @if($totalDocs)
+                    <button class="btn btn-secondary btn-sm"
+                        data-bs-toggle="modal"
                         data-bs-target="#docModal-{{ $modalId }}">
-                        <i class="fas fa-file-alt"></i>
+                        <i class="fas fa-file-alt"></i> {{ $totalDocs }}
                     </button>
                     @else
-                    <span class="text-muted">Tidak ada dokumen</span>
+                    -
                     @endif
+                </td>
+
+                <td class="text-center">
+                    <span class="badge {{ $badgeClass }}">
+                        {{ ucfirst($item->status_akademik ?? '-') }}
+                    </span>
                 </td>
             </tr>
             @endforeach
         </tbody>
     </table>
 </div>
+@endsection
 
-<!-- Modal Dokumen -->
+{{-- ================= MODAL DOKUMEN (DISAMAKAN DENGAN DOSEN) ================= --}}
 @foreach ($keahlianUnique as $item)
 @php
-$allDocs = [
-'Sertifikat' => $item->dokumen_sertifikat ?? [],
-'Lainnya' => $item->dokumen_lainnya ?? [],
-'Pendidikan' => $item->dokumen_pendidikan ?? [],
-'Link' => $item->link ?? [],
-];
-$bidangGabunganStr = is_array($item->bidang_keahlian) ? implode(', ', $item->bidang_keahlian) : '-';
 $modalId = md5($item->nama_dosen);
 @endphp
+
 <div class="modal fade" id="docModal-{{ $modalId }}" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Dokumen Pendukung - {{ $bidangGabunganStr }}</h5>
+                <h5 class="modal-title">Dokumen Pendukung - {{ $item->nama_dosen }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body">
+                @foreach(['sertifikat','lainnya','pendidikan','link'] as $type)
+                @php
+                $docs = $type === 'link'
+                ? ($item->link ?? [])
+                : ($item->{'dokumen_'.$type} ?? []);
 
-                @foreach ($allDocs as $type => $docs)
-                @if (count($docs))
-                <h6 class="mt-3">{{ $type }}</h6>
-                @foreach ($docs as $i => $doc)
-                <div class="card mb-2 p-2">
-                    @if ($type == 'Link')
-                    <a href="{{ $doc }}" target="_blank">{{ $doc }}</a>
-                    @else
-                    @php $ext = strtolower(pathinfo($doc, PATHINFO_EXTENSION)); @endphp
+                $deskripsi = $item->{'deskripsi_'.$type} ?? [];
+                $tahun = $item->{'tahun_'.$type} ?? [];
+                @endphp
 
-                    @if ($ext == 'pdf')
-                    <embed src="{{ asset('storage/' . $doc) }}" type="application/pdf"
-                        width="100%" height="400px">
-                    @elseif(in_array($ext, ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx']))
-                    <iframe
-                        src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/' . $doc)) }}"
-                        width="100%" height="400px"></iframe>
-                    @else
-                    <a href="{{ asset('storage/' . $doc) }}"
-                        target="_blank">{{ basename($doc) }}</a>
-                    @endif
+                @if(count($docs))
+                <h6 class="mt-3 mb-2">{{ ucfirst($type) }}</h6>
 
-                    <div>Deskripsi: {{ $item->{'deskripsi_' . strtolower($type)}[$i] ?? '-' }}</div>
-                    <div>Tahun: {{ $item->{'tahun_' . strtolower($type)}[$i] ?? '-' }}</div>
-                    @endif
+                <div style="display:flex; flex-wrap:wrap; gap:15px;">
+                    @foreach($docs as $i => $doc)
+                    <div style="width:220px; border:1px solid #dee2e6; border-radius:6px; padding:8px; display:flex; flex-direction:column; align-items:center;">
+
+                        @if($type === 'link')
+                        @php
+                        $host = parse_url($doc, PHP_URL_HOST);
+                        $logo = 'https://www.google.com/s2/favicons?sz=64&domain=' . $host;
+                        @endphp
+                        <a href="{{ $doc }}" target="_blank" style="text-align:center;">
+                            <img src="{{ $logo }}" style="width:32px;height:32px;">
+                            <div><small>{{ $deskripsi[$i] ?? '-' }}</small></div>
+                        </a>
+                        @else
+                        <a href="{{ asset('storage/'.$doc) }}" target="_blank" style="text-align:center;">
+                            <embed src="{{ asset('storage/'.$doc) }}"
+                                type="application/pdf"
+                                width="180px"
+                                height="180px"
+                                style="margin-bottom:5px;">
+                            <div><small>{{ $deskripsi[$i] ?? '-' }}</small></div>
+                            <div><small>{{ $tahun[$i] ?? '-' }}</small></div>
+                        </a>
+                        @endif
+
+                    </div>
+                    @endforeach
                 </div>
-                @endforeach
                 @endif
                 @endforeach
-
             </div>
+
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
             </div>
@@ -163,18 +187,17 @@ $modalId = md5($item->nama_dosen);
     </div>
 </div>
 @endforeach
-@endsection
 
 @section('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+
         let table = $('#keahlianTable').DataTable({
             ordering: false,
             pageLength: 10,
             dom: 't<"d-flex justify-content-between mt-3"ip>',
             language: {
-                emptyTable: "Tidak ada data untuk ditampilkan",
-                zeroRecords: "Data tidak ditemukan"
+                emptyTable: "Tidak ada data untuk ditampilkan"
             }
         });
 
@@ -182,15 +205,10 @@ $modalId = md5($item->nama_dosen);
             table.search($('#searchInput').val()).draw();
         });
 
-        $('#searchInput').on('keyup', function(e) {
-            if (e.key === 'Enter') {
-                table.search(this.value).draw();
-            }
-        });
-
         $('#entriesSelect').on('change', function() {
             table.page.len(this.value).draw();
         });
+
     });
 </script>
 @endsection

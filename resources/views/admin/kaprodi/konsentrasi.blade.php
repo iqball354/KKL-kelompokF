@@ -5,7 +5,7 @@
 <div class="container mt-5">
     <h2>Daftar Konsentrasi Jurusan</h2>
 
-    <!-- FILTER PROGRAM STUDI + PASSWORD (POJOK KANAN) -->
+    <!-- FORM PROGRAM STUDI + KUNCI (POJOK KANAN) -->
     <div class="d-flex justify-content-end mb-3">
         <form method="GET" class="d-flex gap-2 align-items-center flex-wrap">
             <label class="mb-0">Program Studi:</label>
@@ -95,7 +95,6 @@
             @if($isUnlocked)
             @foreach ($data as $item)
             @php
-            // Perbaikan json_decode agar aman jika sudah array
             $subs = is_array($item->sub_konsentrasi)
             ? $item->sub_konsentrasi
             : (is_string($item->sub_konsentrasi) ? json_decode($item->sub_konsentrasi, true) : []);
@@ -179,8 +178,8 @@
             @endforeach
             @else
             <tr>
-                <td></td>
-                <td colspan="6" class="text-center">Masukkan program studi dan kunci untuk menampilkan data</td>
+                <td colspan="7" class="text-center text-muted">
+                    Masukkan program studi dan kunci untuk menampilkan data
             </tr>
             @endif
         </tbody>
@@ -330,20 +329,12 @@
         if (!isUnlocked) return;
 
         const table = $('#konsentrasiTable').DataTable({
-            order: [
-                [1, 'asc']
-            ],
+            ordering: false,
             pageLength: 10,
             dom: 't<"d-flex justify-content-between mt-3"ip>',
-            columnDefs: [{
-                    targets: 0,
-                    orderable: false
-                },
-                {
-                    targets: [4, 5, 6],
-                    orderable: false
-                }
-            ]
+            language: {
+                emptyTable: "Tidak ada data untuk ditampilkan"
+            }
         });
 
         table.on('order.dt search.dt draw.dt', function() {
@@ -376,8 +367,7 @@
         <div class="input-group mb-2">
             <input type="text" name="sub_konsentrasi[]" class="form-control" placeholder="Sub Konsentrasi">
             <button type="button" class="btn btn-danger removeSub">-</button>
-        </div>
-        `);
+        </div>`);
         });
 
         // Hapus Sub
@@ -408,8 +398,7 @@
                 <div class="input-group mb-2">
                     <input type="text" name="sub_konsentrasi[]" class="form-control" value="${sub}">
                     <button type="button" class="btn btn-danger removeSub">-</button>
-                </div>
-                `);
+                </div>`);
                 });
 
                 new bootstrap.Modal(document.getElementById('editModal')).show();
@@ -422,8 +411,7 @@
         <div class="input-group mb-2">
             <input type="text" name="sub_konsentrasi[]" class="form-control" placeholder="Sub Konsentrasi">
             <button type="button" class="btn btn-danger removeSub">-</button>
-        </div>
-        `);
+        </div>`);
         });
 
         // VIEW BUTTON

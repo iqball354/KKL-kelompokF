@@ -1,5 +1,5 @@
 @extends('admin.layout.dosen.main')
-@section('title', 'Dashboard')
+@section('title', 'Data Bidang Keahlian Dosen')
 
 @section('content')
 
@@ -8,8 +8,14 @@
 
     <!-- Tombol Tambah -->
     <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addExpertModal">
-        Tambah Bidang Keahlian
+        + Tambah Bidang Keahlian
     </button>
+
+    @if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ session('success') }}
+    </div>
+    @endif
 
     <!-- Tabel Ringkas -->
     <table class="my-table" id="keahlianTable">
@@ -24,46 +30,44 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($keahlian as $item)
+            @forelse($keahlian as $item)
             @php
             $totalDocs = count($item->dokumen_sertifikat ?? []) +
             count($item->dokumen_lainnya ?? []) +
             count($item->dokumen_pendidikan ?? []) +
             count($item->link ?? []);
             $modalId = md5($item->id . $item->nama_dosen);
+            $status = strtolower($item->status_akademik ?? '');
+            $badgeClass = match($status) {
+            'disetujui', 'approved' => 'bg-success',
+            'ditolak', 'rejected' => 'bg-danger',
+            default => 'bg-secondary',
+            };
             @endphp
             <tr>
                 <td style="text-align: center;">{{ $loop->iteration }}</td>
                 <td>{{ $item->nama_dosen ?? '-' }}</td>
                 <td>{{ is_array($item->bidang_keahlian) ? implode(', ', $item->bidang_keahlian) : $item->bidang_keahlian }}</td>
                 <td>
-                    @if($totalDocs)
-                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#docModal-{{ $modalId }}">
+                    <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#docModal-{{ $modalId }}">
                         <i class="fas fa-file-alt"></i> {{ $totalDocs }}
                     </button>
-                    @else
-                    -
-                    @endif
                 </td>
                 <td>
-                    <span class="badge 
-                        @if($item->status_akademik=='disetujui') bg-success
-                        @elseif($item->status_akademik=='ditolak') bg-danger
-                        @else bg-secondary @endif">
-                        {{ ucfirst($item->status_akademik) ?? '-' }}
-                    </span>
+                    <span class="badge {{ $badgeClass }}">{{ $item->status_akademik ?? '-' }}</span>
                 </td>
                 <td>
-                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewMataModal-{{ $item->id }}">
+                    <button class="btn btn-sm" style="background-color:#00cfff; color:black;" data-bs-toggle="modal" data-bs-target="#viewMataModal-{{ $item->id }}">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editExpertModal-{{ $item->id }}">
+
+                    <button class="btn btn-sm" style="background-color:#ffc107; color:black;" data-bs-toggle="modal" data-bs-target="#editExpertModal-{{ $item->id }}">
                         <i class="fas fa-pen"></i>
                     </button>
-                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
+
+                    <button class="btn btn-sm" style="background-color:#dc3545; color:white;" data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $item->id }}">
                         <i class="fas fa-trash"></i>
                     </button>
-
 
                     <!-- Modal Hapus -->
                     <div class="modal fade" id="deleteModal-{{ $item->id }}" tabindex="-1">
@@ -90,7 +94,11 @@
 
                 </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="6" class="text-center">Tidak ada data untuk ditampilkan</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </div>
@@ -99,13 +107,14 @@
 <div class="modal fade" id="addExpertModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="{{ route('keahlian.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="formAddExpert" action="{{ route('keahlian.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">Tambah Bidang Keahlian</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+
                     <label>Nama Dosen</label>
                     <input type="text" name="nama_dosen" class="form-control mb-3">
 
@@ -128,21 +137,22 @@
 
                     @foreach(['sertifikat','lainnya','pendidikan'] as $type)
                     <div class="doc-container border p-3 mb-3" data-type="{{ $type }}" style="display:none;">
-                        <h6 class="text-center">Dokumen {{ ucfirst($type) }}</h6>
+                        <h6 class="text-center">Untuk menambahkan Dokumen {{ ucfirst($type) }}</h6>
                         <div class="doc-list"></div>
                         <button type="button" class="btn btn-secondary btn-sm add-doc" data-type="{{ $type }}">Tambah Dokumen</button>
                     </div>
                     @endforeach
 
                     <div class="doc-container border p-3 mb-3" data-type="link" style="display:none;">
-                        <h6 class="text-center">Link Dokumen / Portofolio</h6>
-                        <div class="link-list"></div>
+                        <h6 class="text-center">Untuk menambahkan Link website / link Portofolio</h6>
+                        <div class="link-list" style="display:flex; flex-wrap:wrap; gap:15px;"></div>
                         <button type="button" class="btn btn-secondary btn-sm add-link">Tambah Link</button>
                     </div>
+
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary">Simpan</button>
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 </div>
             </form>
         </div>
@@ -154,13 +164,14 @@
 <div class="modal fade" id="editExpertModal-{{ $item->id }}" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="{{ route('keahlian.update', $item->id) }}" method="POST" enctype="multipart/form-data">
+            <form id="formEditExpert-{{ $item->id }}" action="{{ route('keahlian.update', $item->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf @method('PUT')
                 <div class="modal-header">
                     <h5 class="modal-title">Edit Bidang Keahlian</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+
                     <label>Nama Dosen</label>
                     <input type="text" name="nama_dosen" class="form-control mb-3" value="{{ $item->nama_dosen ?? '' }}">
 
@@ -185,20 +196,15 @@
 
                     @foreach(['sertifikat','lainnya','pendidikan'] as $type)
                     <div class="doc-container border p-3 mb-3" data-type="{{ $type }}" style="display:none;">
-                        <h6 class="text-center">Dokumen {{ ucfirst($type) }}</h6>
+                        <h6 class="text-center">Untuk menambahkan Dokumen {{ ucfirst($type) }}</h6>
                         <div class="doc-list">
                             @foreach($item->{'dokumen_'.$type} ?? [] as $i => $doc)
                             <div class="doc-row mb-2">
-                                @php $ext = strtolower(pathinfo($doc, PATHINFO_EXTENSION)); @endphp
-                                @if($ext=='pdf')
-                                <embed src="{{ asset('storage/'.$doc) }}" width="100%" height="150px">
-                                @elseif(in_array($ext,['doc','docx','xls','xlsx','ppt','pptx']))
-                                <iframe src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/'.$doc)) }}" width="100%" height="150px"></iframe>
-                                @else
-                                <a href="{{ asset('storage/'.$doc) }}" target="_blank">{{ basename($doc) }}</a>
-                                @endif
-                                <input type="text" name="deskripsi_{{ $type }}[]" class="form-control mt-1" value="{{ $item->{'deskripsi_'.$type}[$i] ?? '' }}" placeholder="Deskripsi">
-                                <input type="number" name="tahun_{{ $type }}[]" class="form-control mt-1" value="{{ $item->{'tahun_'.$type}[$i] ?? '' }}" placeholder="Tahun" min="1900" max="2100">
+                                <a href="{{ asset('storage/'.$doc) }}" target="_blank" style="display:flex; flex-direction:column; align-items:center;">
+                                    <embed src="{{ asset('storage/'.$doc) }}" type="application/pdf" width="180px" height="180px" style="margin-bottom:5px;">
+                                    <div><small>{{ $item->{'deskripsi_'.$type}[$i] ?? '-' }}</small></div>
+                                    <div><small>{{ $item->{'tahun_'.$type}[$i] ?? '-' }}</small></div>
+                                </a>
                                 <button type="button" class="btn btn-danger btn-sm mt-1 remove-doc-existing">Hapus</button>
                             </div>
                             @endforeach
@@ -207,23 +213,27 @@
                     </div>
                     @endforeach
 
+                    <!-- Link editable -->
                     <div class="doc-container border p-3 mb-3" data-type="link" style="display:none;">
-                        <h6 class="text-center">Link Dokumen / Portofolio</h6>
-                        <div class="link-list">
-                            @foreach($item->link ?? [] as $l)
-                            <div class="link-row mb-2 d-flex">
-                                <input type="url" name="link[]" class="form-control me-2" value="{{ $l }}">
-                                <button type="button" class="btn btn-danger btn-sm remove-link">Hapus</button>
+                        <h6 class="text-center">Untuk menambahkan Link website / link Portofolio</h6>
+                        <div class="link-list" style="display:flex; flex-wrap:wrap; gap:15px;">
+                            @foreach($item->link ?? [] as $i => $l)
+                            <div class="link-row d-flex flex-column align-items-start mb-2" style="width:100%;">
+                                <div class="d-flex gap-2">
+                                    <input type="text" name="link[]" class="form-control" value="{{ $l }}" placeholder="URL Link">
+                                    <input type="text" name="deskripsi_link[]" class="form-control" value="{{ $item->deskripsi_link[$i] ?? '' }}" placeholder="Deskripsi Link">
+                                    <button type="button" class="btn btn-danger btn-sm remove-link">Hapus</button>
+                                </div>
                             </div>
                             @endforeach
                         </div>
-                        <button type="button" class="btn btn-secondary btn-sm add-link-btn" data-id="{{ $item->id }}">Tambah Link</button>
+                        <button type="button" class="btn btn-secondary btn-sm add-link-btn mt-2" data-id="{{ $item->id }}">Tambah Link</button>
                     </div>
 
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary">Simpan</button>
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 </div>
             </form>
         </div>
@@ -233,6 +243,14 @@
 
 <!-- MODAL VIEW STATUS -->
 @foreach($keahlian as $item)
+@php
+$status = strtolower($item->status_akademik ?? '');
+$badgeClass = match($status) {
+'disetujui', 'approved' => 'bg-success',
+'ditolak', 'rejected' => 'bg-danger',
+default => 'bg-secondary',
+};
+@endphp
 <div class="modal fade" id="viewMataModal-{{ $item->id }}" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -241,11 +259,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center">
-                <p>Status Akademik: <strong>{{ ucfirst($item->status_akademik) }}</strong></p>
+                <p>Status Akademik: <span class="badge {{ $badgeClass }}">{{ $item->status_akademik ?? '-' }}</span></p>
                 <p>Waktu Validasi: <strong>{{ $item->validasi_at ? $item->validasi_at->format('d/m/Y H:i') : '-' }}</strong></p>
-                @if($item->alasan_validasi)
-                <p>Alasan: <em>{{ $item->alasan_validasi }}</em></p>
-                @endif
+                <p>Alasan: <em>{{ $item->alasan_validasi ?? '-' }}</em></p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -255,17 +271,9 @@
 </div>
 @endforeach
 
-<!-- MODAL DOKUMEN -->
+<!-- MODAL DOKUMEN PENDUKUNG PREVIEW -->
 @foreach($keahlian as $item)
-@php
-$allDocs = [
-'Sertifikat' => $item->dokumen_sertifikat ?? [],
-'Lainnya' => $item->dokumen_lainnya ?? [],
-'Pendidikan' => $item->dokumen_pendidikan ?? [],
-'Link' => $item->link ?? [],
-];
-$modalId = md5($item->id . $item->nama_dosen);
-@endphp
+@php $modalId = md5($item->id . $item->nama_dosen); @endphp
 <div class="modal fade" id="docModal-{{ $modalId }}" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
@@ -274,27 +282,34 @@ $modalId = md5($item->id . $item->nama_dosen);
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                @foreach($allDocs as $type => $docs)
+                @foreach(['sertifikat','lainnya','pendidikan','link'] as $type)
+                @php
+                $docs = $type === 'link' ? ($item->link ?? []) : ($item->{'dokumen_'.$type} ?? []);
+                $deskripsi = $item->{'deskripsi_'.$type} ?? [];
+                $tahun = $type==='link' ? [] : ($item->{'tahun_'.$type} ?? []);
+                @endphp
+
                 @if(count($docs))
-                <h6 class="mt-3">{{ $type }}</h6>
-                @foreach($docs as $i => $doc)
-                <div class="card mb-2 p-2">
-                    @if($type == 'Link')
-                    <a href="{{ $doc }}" target="_blank">{{ $doc }}</a>
-                    @else
-                    @php $ext = strtolower(pathinfo($doc, PATHINFO_EXTENSION)); @endphp
-                    @if($ext=='pdf')
-                    <embed src="{{ asset('storage/'.$doc) }}" type="application/pdf" width="100%" height="400px">
-                    @elseif(in_array($ext,['doc','docx','xls','xlsx','ppt','pptx']))
-                    <iframe src="https://view.officeapps.live.com/op/embed.aspx?src={{ urlencode(asset('storage/'.$doc)) }}" width="100%" height="400px"></iframe>
-                    @else
-                    <a href="{{ asset('storage/'.$doc) }}" target="_blank">{{ basename($doc) }}</a>
-                    @endif
-                    <div>Deskripsi: {{ $item->{'deskripsi_' . strtolower($type)}[$i] ?? '-' }}</div>
-                    <div>Tahun: {{ $item->{'tahun_' . strtolower($type)}[$i] ?? '-' }}</div>
-                    @endif
+                <h6 class="mt-3 mb-2">{{ ucfirst($type) }}</h6>
+                <div style="display:flex; flex-wrap:wrap; gap:15px;">
+                    @foreach($docs as $i => $doc)
+                    <div style="width:220px; border:1px solid #dee2e6; border-radius:5px; padding:8px; display:flex; flex-direction:column; align-items:center;">
+                        @if($type==='link')
+                        @php $host = parse_url($doc, PHP_URL_HOST); $logo = 'https://www.google.com/s2/favicons?sz=64&domain=' . $host; @endphp
+                        <a href="{{ $doc }}" target="_blank" style="text-align:center;">
+                            <img src="{{ $logo }}" alt="Logo" style="width:32px; height:32px; object-fit:contain;">
+                            <div><small>{{ $deskripsi[$i] ?? '-' }}</small></div>
+                        </a>
+                        @else
+                        <a href="{{ asset('storage/'.$doc) }}" target="_blank" style="text-align:center;">
+                            <embed src="{{ asset('storage/'.$doc) }}" type="application/pdf" width="180px" height="180px" style="margin-bottom:5px;">
+                            <div><small>{{ $deskripsi[$i] ?? '-' }}</small></div>
+                            <div><small>{{ $tahun[$i] ?? '-' }}</small></div>
+                        </a>
+                        @endif
+                    </div>
+                    @endforeach
                 </div>
-                @endforeach
                 @endif
                 @endforeach
             </div>
@@ -306,84 +321,4 @@ $modalId = md5($item->id . $item->nama_dosen);
 </div>
 @endforeach
 
-@endsection
-
-@section('scripts')
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-
-        // Tambah bidang keahlian
-        document.getElementById("add-bidang")?.addEventListener("click", function() {
-            let container = document.getElementById("bidang-container");
-            let div = document.createElement("div");
-            div.classList.add("input-group", "mb-2");
-            div.innerHTML = `<input type="text" name="bidang_keahlian[]" class="form-control">
-                         <button type="button" class="btn btn-danger remove-bidang">X</button>`;
-            container.appendChild(div);
-        });
-
-        document.querySelectorAll(".add-bidang-btn").forEach(btn => {
-            btn.addEventListener("click", function() {
-                let id = this.dataset.id;
-                let container = document.getElementById(`edit-bidang-container-${id}`);
-                let div = document.createElement("div");
-                div.classList.add("input-group", "mb-2");
-                div.innerHTML = `<input type="text" name="bidang_keahlian[]" class="form-control">
-                             <button type="button" class="btn btn-danger remove-bidang">X</button>`;
-                container.appendChild(div);
-            });
-        });
-
-        // Toggle Dokumen
-        document.querySelectorAll(".toggle-doc").forEach(btn => {
-            btn.addEventListener("click", function() {
-                let type = this.dataset.type;
-                this.closest(".modal-body").querySelectorAll(".doc-container").forEach(c => {
-                    c.style.display = c.dataset.type === type ? (c.style.display === "none" ? "block" : "none") : "none";
-                });
-            });
-        });
-
-        function createDocRow(type) {
-            let div = document.createElement("div");
-            div.classList.add("doc-row", "mb-2");
-            div.innerHTML = `<div class="drive-upload-wrapper">
-                            <label class="drive-upload-box">
-                                <i class="fas fa-file-alt"></i> <span class="drive-text">Upload File</span>
-                                <input type="file" name="dokumen_${type}[]" class="file-hidden drive-input">
-                            </label>
-                            <input type="text" name="deskripsi_${type}[]" placeholder="Deskripsi" class="form-control mt-1">
-                            <input type="number" name="tahun_${type}[]" placeholder="Tahun" class="form-control mt-1" min="1900" max="2100">
-                            <button type="button" class="btn btn-danger btn-sm mt-1 remove-doc">Hapus</button>
-                     </div>`;
-            return div;
-        }
-
-        document.querySelectorAll(".add-doc, .add-doc-btn").forEach(btn => {
-            btn.addEventListener("click", function() {
-                let type = this.dataset.type;
-                let container = this.closest(".doc-container").querySelector(".doc-list");
-                container.appendChild(createDocRow(type));
-            });
-        });
-
-        document.querySelectorAll(".add-link, .add-link-btn").forEach(btn => {
-            btn.addEventListener("click", function() {
-                let container = this.closest(".doc-container").querySelector(".link-list");
-                let div = document.createElement("div");
-                div.classList.add("link-row", "mb-2", "d-flex");
-                div.innerHTML = `<input type="url" name="link[]" class="form-control me-2">
-                             <button type="button" class="btn btn-danger btn-sm remove-link">Hapus</button>`;
-                container.appendChild(div);
-            });
-        });
-
-        document.addEventListener("click", function(e) {
-            if (e.target.classList.contains("remove-bidang")) e.target.parentElement.remove();
-            if (e.target.classList.contains("remove-doc") || e.target.classList.contains("remove-doc-existing")) e.target.closest(".doc-row").remove();
-            if (e.target.classList.contains("remove-link")) e.target.closest(".link-row").remove();
-        });
-
-    });
-</script>
 @endsection

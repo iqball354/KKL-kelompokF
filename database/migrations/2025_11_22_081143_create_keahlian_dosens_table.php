@@ -34,6 +34,7 @@ return new class extends Migration
 
             // Link Dokumen / Portofolio
             $table->json('link')->nullable();
+            $table->json('deskripsi_link')->nullable();
 
             // Status akademik / validasi
             $table->enum('status_akademik', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');

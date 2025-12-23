@@ -2,31 +2,64 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<h5>Statistik Sistem Akademik</h5>
-<div class="d-flex flex-wrap mt-3">
-    <div class="card m-2" style="width: 13rem; border-radius: 10px;">
-        <div class="card-body d-flex justify-content-between align-items-center">
-            <span>Total Dosen</span>
-            <i class="fas fa-user"></i>
+<h4>Selamat Datang di Halaman Dashboard Akademik</h4>
+<p>Fitur akademik di sistem ini mencakup:</p>
+
+<div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+
+    <div class="col">
+        <div class="card h-100" style="background-color:#007bff; border-radius:10px; color:white;">
+            <div class="card-body">
+                <h5 class="card-title">Bidang Keahlian</h5>
+                <p class="card-text">Validasi bidang keahlian dosen dan dokumen pendukung</p>
+            </div>
         </div>
     </div>
-    <div class="card m-2" style="width: 13rem; border-radius: 10px;">
-        <div class="card-body d-flex justify-content-between align-items-center">
-            <span>Kurikulum</span>
-            <i class="fas fa-users"></i>
+
+    <div class="col">
+        <div class="card h-100" style="background-color:#ffc107; border-radius:10px; color:white;">
+            <div class="card-body">
+                <h5 class="card-title">Kurikulum</h5>
+                <p class="card-text">Total kurikulum yang ada / Aktif / Nonaktif</p>
+            </div>
         </div>
     </div>
-    <div class="card m-2" style="width: 13rem; border-radius: 10px;">
-        <div class="card-body d-flex justify-content-between align-items-center">
-            <span>Mata Kuliah</span>
-            <i class="fas fa-book"></i>
+
+    <div class="col">
+        <div class="card h-100" style="background-color:#28a745; border-radius:10px; color:white;">
+            <div class="card-body">
+                <h5 class="card-title">Konsentrasi Jurusan</h5>
+                <p class="card-text">Verifikasi konsentrasi jurusan milik Kaprodi</p>
+            </div>
         </div>
     </div>
-    <div class="card m-2" style="width: 13rem; border-radius: 10px;">
-        <div class="card-body d-flex justify-content-between align-items-center">
-            <span>Program Studi</span>
-            <i class="fas fa-graduation-cap"></i>
-        </div>
-    </div>
+
 </div>
+
+<h5 class="mt-4">Keterangan Fitur</h5>
+
+<h6>Bidang Keahlian Dosen</h6>
+<ol>
+    <li>Melihat total dokumen pendukung yang telah diunggah</li>
+    <li>Menyetujui bidang keahlian dosen</li>
+    <li>Menolak bidang keahlian dosen</li>
+    <li>Mengirim pesan terkait bidang keahlian milik dosen</li>
+</ol>
+
+<h6>Kurikulum</h6>
+<ol>
+    <li>Menambahkan kurikulum baru</li>
+    <li>Mengedit kurikulum</li>
+    <li>Menghapus kurikulum</li>
+    <li>Mengaktifkan / menonaktifkan kurikulum</li>
+</ol>
+
+<h6>Konsentrasi Jurusan Kaprodi</h6>
+<ol>
+    <li>Melihat konsentrasi jurusan milik kaprodi</li>
+    <li>Menyetujui konsentrasi jurusan milik kaprodi</li>
+    <li>Menolak konsentrasi jurusan milik kaprodi</li>
+    <li>Mengirim pesan terkait konsentrasi jurusan milik kaprodi</li>
+</ol>
+
 @endsection

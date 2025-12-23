@@ -34,6 +34,7 @@ class KeahlianDosenController extends Controller
             'tahun_lainnya.*' => 'nullable|integer|min:1900|max:' . date('Y'),
             'tahun_pendidikan.*' => 'nullable|integer|min:1900|max:' . date('Y'),
             'link.*' => 'nullable|url',
+            'deskripsi_link.*' => 'nullable|string|max:255', // validasi deskripsi link
         ]);
 
         $data = [
@@ -49,6 +50,7 @@ class KeahlianDosenController extends Controller
             'tahun_lainnya' => $request->tahun_lainnya ?? [],
             'tahun_pendidikan' => $request->tahun_pendidikan ?? [],
             'link' => $request->link ?? [],
+            'deskripsi_link' => $request->deskripsi_link ?? [],
             'status_akademik' => 'menunggu',
         ];
 
@@ -86,6 +88,7 @@ class KeahlianDosenController extends Controller
         }
 
         $keahlian->link = $request->link ?? [];
+        $keahlian->deskripsi_link = $request->deskripsi_link ?? [];
         $keahlian->save();
 
         return back()->with('success', 'Data berhasil diperbarui');
