@@ -179,9 +179,9 @@ class KeahlianDosenController extends Controller
         $keahlian = KeahlianDosen::findOrFail($id);
 
         $keahlian->status_akademik = $request->status_akademik;
-        $keahlian->alasan_validasi = $request->status_akademik === 'ditolak'
-            ? ($request->alasan_validasi ?? 'Tidak ada alasan diberikan')
-            : null;
+        if ($request->filled('alasan_validasi')) {
+        $keahlian->alasan_validasi = $request->alasan_validasi;
+    }
         $keahlian->validasi_by = Auth::id();
         $keahlian->validasi_at = now();
         $keahlian->save();
