@@ -47,7 +47,7 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Kurikulum</th>
+                <th>ID Kurikulum</th>
                 <th>Kode</th>
                 <th>Nama Konsentrasi</th>
                 <th>Sub Konsentrasi</th>

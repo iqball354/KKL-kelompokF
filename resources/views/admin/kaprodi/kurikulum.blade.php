@@ -70,7 +70,7 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Kurikulum</th>
+                <th>ID Kurikulum</th>
                 <th>Tahun</th>
                 <th>Program Studi</th>
                 <th>Dokumen</th>

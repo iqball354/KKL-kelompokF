@@ -42,7 +42,7 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>id Kurikulum</th>
+                <th>ID Kurikulum</th>
                 <th>Tahun</th>
                 <th>Program Studi</th>
                 <th>Dokumen</th>
