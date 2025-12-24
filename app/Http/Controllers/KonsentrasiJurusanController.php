@@ -36,6 +36,12 @@ class KonsentrasiJurusanController extends Controller
                 isset($validPasswords[$queryProdi]) &&
                 $validPasswords[$queryProdi] === $password
             ) {
+                // Simpan state ke session (KUNCI)
+                session([
+                    'kaprodi_prodi'    => $queryProdi,
+                    'kaprodi_password' => $password,
+                ]);
+
                 $kurikulums = Kurikulum::where('program_studi', $queryProdi)->get();
 
                 $data = KonsentrasiJurusan::with('kurikulum')
@@ -76,7 +82,12 @@ class KonsentrasiJurusanController extends Controller
             'status_verifikasi' => 'menunggu',
         ]);
 
-        return redirect()->back()->with('success', 'Data konsentrasi berhasil ditambahkan');
+        return redirect()->route('kaprodi.konsentrasi.index', [
+            'prodi'    => $request->prodi,
+            'password' => $request->password,
+        ])->with('success', 'Data konsentrasi berhasil ditambahkan');
+
+
     }
 
     // =====================================================
@@ -106,7 +117,11 @@ class KonsentrasiJurusanController extends Controller
             'alasan_verifikasi' => null,
         ]);
 
-        return redirect()->back()->with('success', 'Data konsentrasi berhasil diperbarui');
+        return redirect()->route('kaprodi.konsentrasi.index', [
+            'prodi'    => $request->prodi,
+            'password' => $request->password,
+        ])->with('success', 'Data konsentrasi berhasil diperbarui');
+
     }
 
     // =====================================================
@@ -116,7 +131,10 @@ class KonsentrasiJurusanController extends Controller
     {
         KonsentrasiJurusan::findOrFail($id)->delete();
 
-        return redirect()->back()->with('success', 'Data konsentrasi berhasil dihapus');
+        return redirect()->route('kaprodi.konsentrasi.index', [
+        'prodi'    => session('kaprodi_prodi'),
+        'password' => session('kaprodi_password'),
+        ])->with('success', 'Data konsentrasi berhasil dihapus');
     }
 
     // =====================================================

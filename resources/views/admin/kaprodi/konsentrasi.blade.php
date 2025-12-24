@@ -2,6 +2,9 @@
 @section('title', 'Data Konsentrasi Jurusan')
 
 @section('content')
+@php
+    $activeProdi = $queryProdi ?? session('kaprodi_prodi');
+@endphp
 <div class="container mt-5">
     <h2>Daftar Konsentrasi Jurusan</h2>
 
@@ -12,15 +15,15 @@
             <select name="prodi" class="form-select" style="width: 220px;">
                 <option value="">Semua Program Studi</option>
                 <optgroup label="Fakultas Ekonomi dan Bisnis (FEB)">
-                    <option value="S2 Magister Manajemen" {{ ($queryProdi ?? '') == 'S2 Magister Manajemen' ? 'selected' : '' }}>S2 Magister Manajemen</option>
-                    <option value="S1 Manajemen" {{ ($queryProdi ?? '') == 'S1 Manajemen' ? 'selected' : '' }}>S1 Manajemen</option>
-                    <option value="S1 Akuntansi" {{ ($queryProdi ?? '') == 'S1 Akuntansi' ? 'selected' : '' }}>S1 Akuntansi</option>
-                    <option value="S1 Ekonomi Pembangunan" {{ ($queryProdi ?? '') == 'S1 Ekonomi Pembangunan' ? 'selected' : '' }}>S1 Ekonomi Pembangunan</option>
-                    <option value="D3 Keuangan dan Perbankan" {{ ($queryProdi ?? '') == 'D3 Keuangan dan Perbankan' ? 'selected' : '' }}>D3 Keuangan dan Perbankan</option>
+                    <option value="S2 Magister Manajemen" {{ $activeProdi == 'S2 Magister Manajemen' ? 'selected' : '' }}>S2 Magister Manajemen</option>
+                    <option value="S1 Manajemen" {{ $activeProdi== 'S1 Manajemen' ? 'selected' : '' }}>S1 Manajemen</option>
+                    <option value="S1 Akuntansi" {{ $activeProdi == 'S1 Akuntansi' ? 'selected' : '' }}>S1 Akuntansi</option>
+                    <option value="S1 Ekonomi Pembangunan" {{ $activeProdi == 'S1 Ekonomi Pembangunan' ? 'selected' : '' }}>S1 Ekonomi Pembangunan</option>
+                    <option value="D3 Keuangan dan Perbankan" {{ $activeProdi == 'D3 Keuangan dan Perbankan' ? 'selected' : '' }}>D3 Keuangan dan Perbankan</option>
                 </optgroup>
                 <optgroup label="Fakultas FSTI">
-                    <option value="S1 Sistem dan Teknologi Informasi" {{ ($queryProdi ?? '') == 'S1 Sistem dan Teknologi Informasi' ? 'selected' : '' }}>S1 Sistem dan Teknologi Informasi</option>
-                    <option value="S1 Rekayasa Perangkat Lunak" {{ ($queryProdi ?? '') == 'S1 Rekayasa Perangkat Lunak' ? 'selected' : '' }}>S1 Rekayasa Perangkat Lunak</option>
+                    <option value="S1 Sistem dan Teknologi Informasi" {{ $activeProdi== 'S1 Sistem dan Teknologi Informasi' ? 'selected' : '' }}>S1 Sistem dan Teknologi Informasi</option>
+                    <option value="S1 Rekayasa Perangkat Lunak" {{ $activeProdi == 'S1 Rekayasa Perangkat Lunak' ? 'selected' : '' }}>S1 Rekayasa Perangkat Lunak</option>
                 </optgroup>
             </select>
 
@@ -33,7 +36,9 @@
     <div class="alert alert-danger">{{ $error }}</div>
     @endif
 
-    @php $isUnlocked = isset($kurikulums) && $kurikulums->count() > 0; @endphp
+    @php
+    $isUnlocked = !empty($activeProdi) && isset($kurikulums) && $kurikulums->count() > 0;
+    @endphp
     <input type="hidden" id="isUnlockedFlag" value="{{ $isUnlocked ? 1 : 0 }}">
 
     <!-- FILTER TABEL -->
@@ -77,6 +82,10 @@
             + Tambah Konsentrasi
         </button>
     </div>
+
+    @if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
     <!-- TABEL -->
     <table class="my-table table table-striped" id="konsentrasiTable">
@@ -197,6 +206,8 @@
             <div class="modal-body">
                 @if($isUnlocked)
                 <form method="POST" action="{{ route('kaprodi.konsentrasi.store') }}" id="createForm">
+                    <input type="hidden" name="prodi" value="{{ request('prodi') }}">
+                    <input type="hidden" name="password" value="{{ request('password') }}">
                     @csrf
                     <div class="mb-3">
                         <label>Kurikulum</label>
@@ -259,7 +270,9 @@
                     @csrf
                     @method('PUT')
                     <input type="hidden" id="editKonsentrasiId" name="id">
-
+                    <input type="hidden" name="prodi" value="{{ request('prodi') }}">
+                    <input type="hidden" name="password" value="{{ request('password') }}">
+                    
                     <div class="mb-3">
                         <label>Kurikulum</label>
                         <select name="kurikulum_id" id="editKurikulum" class="form-select" required>
@@ -384,6 +397,10 @@
                 let deskripsi = this.dataset.deskripsi;
                 let kurikulumId = this.dataset.kurikulum;
                 let subList = JSON.parse(this.dataset.sub);
+
+                // SET ACTION FORM (INI YANG KURANG)
+                const form = document.getElementById('editForm');
+                form.action = `/kaprodi/konsentrasi/${id}/update`;
 
                 document.getElementById('editKonsentrasiId').value = id;
                 document.getElementById('editKode').value = kode;
